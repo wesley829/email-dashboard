@@ -7,87 +7,123 @@
 <style>
   :root{
     --green:#1B5E20; --green-soft:#E8F3EA; --gold:#F9A825;
-    --ink:#1A1D1A; --muted:#6B7280; --line:#E7E9E7; --bg:#F7F8F7;
+    --ink:#1A1D1A; --muted:#6B7280; --line:#E7E9E7; --bg:#F4F5F4;
     --card:#FFFFFF; --good:#137a3f; --bad:#C62828; --chip:#EEF1EE;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.5;padding:28px 24px 60px}
-  .wrap{max-width:1180px;margin:0 auto}
+    background:var(--bg);color:var(--ink);line-height:1.5;padding:32px 28px 72px}
+  .wrap{max-width:1200px;margin:0 auto}
 
-  header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px}
-  h1{font-size:24px;font-weight:700;letter-spacing:-.3px}
-  .sub{color:var(--muted);font-size:14px;margin-top:2px}
-  .updated{color:var(--muted);font-size:13px}
+  /* ── Header ── */
+  header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;
+    gap:10px;margin-bottom:6px}
+  h1{font-size:22px;font-weight:700;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:13px;margin-top:3px}
+  .updated{color:var(--muted);font-size:12px;padding-bottom:2px}
 
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 20px}
-  select,button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);
-    color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer}
-  select:hover,button:hover{border-color:#c9ccc9}
-  button.refresh{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+  /* ── Controls ── */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 24px;align-items:center}
+  select,button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;outline:none}
+  select:hover,button:hover{border-color:#b0b3b0}
+  button.refresh{background:var(--green);color:#fff;border-color:var(--green);font-weight:600;
+    padding:9px 18px;letter-spacing:.1px}
   button.refresh:hover{background:#164a1a}
 
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
-  .kpi .label{font-size:13px;color:var(--muted);margin-bottom:6px}
-  .kpi .num{font-size:26px;font-weight:700;letter-spacing:-.5px}
-  .kpi .foot{font-size:12px;color:var(--muted);margin-top:4px}
+  /* ── KPI Cards ── */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:28px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px 14px}
+  .kpi .label{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+  .kpi .num{font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+  .kpi .foot{font-size:11px;color:var(--muted);margin-top:6px}
   .kpi.bad .num{color:var(--bad)}
 
-  .sectionlabel{font-size:16px;font-weight:700;margin:26px 0 10px}
+  /* ── Section header (collapsible) ── */
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;
+    margin:0 0 14px;cursor:pointer;user-select:none;padding:4px 0}
+  .section-hdr:hover .section-title{color:var(--green)}
+  .section-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .section-caret{font-size:11px;color:var(--muted);transition:transform .2s;display:inline-block}
+  .section-hdr.open .section-caret{transform:rotate(90deg)}
+  .section-badge{font-size:11px;font-weight:500;color:var(--muted);background:var(--chip);
+    border-radius:6px;padding:2px 8px}
+  .section-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;
+    max-height:0;opacity:0;pointer-events:none}
+  .section-body.open{max-height:2000px;opacity:1;pointer-events:auto}
+  .section-divider{border:none;border-top:1px solid var(--line);margin:24px 0 20px}
 
-  .tablecard{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  thead th{background:var(--green);color:#fff;font-weight:600;text-align:center;padding:11px 10px;font-size:13px;white-space:nowrap}
+  /* ── Monthly Revenue ── */
+  .rev-summary{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px 24px;margin-bottom:14px}
+  .rev-summary .rs-item{display:flex;flex-direction:column;gap:3px}
+  .rev-summary .rs-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:500}
+  .rev-summary .rs-val{font-size:20px;font-weight:700;letter-spacing:-.4px}
+  .rev-summary .rs-val.green{color:var(--green)}
+  .rev-summary .rs-divider{width:1px;background:var(--line);align-self:stretch;margin:0 4px}
+
+  .monthly-table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;margin-bottom:6px}
+  .monthly-table{width:100%;border-collapse:collapse;font-size:13px}
+  .monthly-table thead th{background:var(--green);color:#fff;font-weight:600;
+    padding:10px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  .monthly-table thead th.r{text-align:right}
+  .monthly-table tbody td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:middle}
+  .monthly-table tbody td.r{text-align:right}
+  .monthly-table tbody tr:hover{background:var(--bg)}
+  .mo-name{font-weight:600;font-size:14px}
+  .mo-badge-cur{display:inline-block;background:var(--green-soft);color:var(--green);
+    font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;
+    text-transform:uppercase;letter-spacing:.3px;vertical-align:middle}
+  .mo-bar-cell{width:200px}
+  .mo-bar-track{background:var(--line);border-radius:4px;height:8px;overflow:hidden}
+  .mo-bar-fill{height:100%;background:var(--green);border-radius:4px;transition:width .5s}
+  .mo-bar-fill.zero{background:#E0E2E0}
+  .mo-rev-val{font-weight:700;color:var(--ink)}
+  .mo-rev-val.zero{color:#C9CCC9;font-weight:400}
+  .mo-ecpm{color:var(--green);font-weight:600}
+  .mo-ecpm.zero{color:var(--muted);font-weight:400}
+
+  /* ── Send Log ── */
+  .sectionlabel{font-size:15px;font-weight:700;margin:0 0 14px}
+  .tablecard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{background:var(--green);color:#fff;font-weight:600;text-align:center;
+    padding:12px 12px;font-size:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
   thead th.l{text-align:left}
-  tbody td{padding:11px 10px;text-align:center;border-top:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:12px 12px;text-align:center;border-top:1px solid var(--line);white-space:nowrap}
   tbody td.l{text-align:left}
   .master{cursor:pointer}
-  .master:hover{background:var(--green-soft)}
+  .master:hover td{background:var(--green-soft)}
   .master td{font-weight:600}
-  .caret{display:inline-block;width:14px;color:var(--muted);transition:transform .15s;font-size:11px}
+  .caret{display:inline-block;width:14px;color:var(--muted);transition:transform .15s;font-size:10px}
   .master.open .caret{transform:rotate(90deg)}
   .title-cell{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .child td{background:#FAFBFA;font-weight:400;color:#374151;font-size:13px}
-  .child td.listname{padding-left:34px;text-align:left;color:var(--green);font-weight:600}
+  .child td{background:#FAFBFA;font-weight:400;color:#374151;font-size:12.5px}
+  .child td.listname{padding-left:36px;text-align:left;color:var(--green);font-weight:600}
   .child{display:none}
   .child.show{display:table-row}
   .good{color:var(--good);font-weight:600}
   .bad{color:var(--bad);font-weight:600}
   .rev{font-weight:700}
-  .dash{color:#B4B7B4}
-  .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
-  .loading{padding:40px;text-align:center;color:var(--muted)}
-  .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;font-size:12px;color:#374151}
+  .dash{color:#C4C7C4}
+  .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.7}
+  .loading{padding:44px;text-align:center;color:var(--muted);font-size:14px}
+  .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;font-size:11px;color:#374151}
 
-  /* Monthly Revenue Section */
-  .monthly-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:6px}
-  .month-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden}
-  .month-card .mo-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-  .month-card .mo-rev{font-size:24px;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
-  .month-card .mo-rev.zero{color:#C9CCC9}
-  .month-card .mo-meta{font-size:12px;color:var(--muted);margin-top:4px}
-  .month-card .mo-ecpm{font-size:13px;font-weight:600;color:var(--green);margin-top:3px}
-  .month-card .mo-bar{position:absolute;bottom:0;left:0;height:4px;background:var(--green);border-radius:0 0 0 14px;transition:width .4s}
-  .month-card.current{border-color:var(--green);box-shadow:0 0 0 2px var(--green-soft)}
-  .rev-chart{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:6px}
-  .rev-chart-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px}
-  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-  .bar-mo{font-size:12px;color:var(--muted);width:44px;flex-shrink:0;text-align:right}
-  .bar-track{flex:1;background:var(--line);border-radius:4px;height:22px;position:relative;overflow:hidden}
-  .bar-fill{height:100%;background:var(--green);border-radius:4px;transition:width .5s;min-width:2px}
-  .bar-fill.zero{background:#E7E9E7}
-  .bar-val{font-size:12px;font-weight:600;color:var(--ink);width:70px;flex-shrink:0}
-  .bar-sends{font-size:11px;color:var(--muted);width:60px;flex-shrink:0}
   @media(max-width:640px){
     .hide-sm{display:none}
-    h1{font-size:20px}
-    .kpi .num{font-size:22px}
+    h1{font-size:19px}
+    .kpi .num{font-size:20px}
+    body{padding:20px 16px 60px}
+    .mo-bar-cell{display:none}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <header>
     <div>
       <h1>Grits &amp; Gear — Email Performance</h1>
@@ -113,12 +149,39 @@
     <button class="refresh" id="refreshBtn">↻ Refresh data</button>
   </div>
 
+  <!-- KPI Scorecards -->
   <div class="kpis" id="kpis"></div>
 
-  <div class="sectionlabel">Monthly Revenue</div>
-  <div class="monthly-grid" id="monthlyCards"></div>
-  <div class="rev-chart" id="revChart"></div>
+  <!-- Monthly Revenue — collapsible -->
+  <div class="section-hdr" id="revHdr">
+    <div class="section-title">
+      <span class="section-caret">▶</span>
+      Monthly Revenue
+      <span class="section-badge" id="revBadge">click to expand</span>
+    </div>
+  </div>
+  <div class="section-body" id="revBody">
+    <div class="rev-summary" id="revSummary"></div>
+    <div class="monthly-table-wrap">
+      <table class="monthly-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th class="r">Revenue</th>
+            <th class="r">ECPM</th>
+            <th class="r">Sends</th>
+            <th class="r hide-sm">Paid Sends</th>
+            <th class="mo-bar-cell hide-sm">vs. Best Month</th>
+          </tr>
+        </thead>
+        <tbody id="revTbody"></tbody>
+      </table>
+    </div>
+  </div>
 
+  <hr class="section-divider">
+
+  <!-- Send Log -->
   <div class="sectionlabel">Send log</div>
   <div class="tablecard">
     <table>
@@ -142,25 +205,18 @@
   </div>
 
   <div class="note">
-    Green click values = above-average engagement · Red = above bounce/unsub threshold · Dashes = revenue not yet logged.<br>
-    Click any campaign row to expand the four individual list sends. Data pulls live from your Google Sheet — hit Refresh after each sync.
+    Green click values = above-average engagement &nbsp;·&nbsp; Red = above unsub threshold &nbsp;·&nbsp; Dashes = revenue not yet logged.<br>
+    Click any campaign row to expand individual list sends. Click <strong>Monthly Revenue</strong> above to expand the revenue breakdown. Data pulls live from your Google Sheet — hit Refresh after each sync.
   </div>
+
 </div>
 
 <script>
-// ============================================================
-// CONFIG — your published Google Sheet CSV URL goes here
-// ============================================================
-// How to get it: In the Google Sheet → File → Share → Publish to web
-// → choose the DATA_tab_for_Looker tab → CSV → copy the link → paste below.
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=932892236&single=true&output=csv";  // live mode
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=932892236&single=true&output=csv";
 const EMBEDDED = {"cols": ["date", "key", "campaign", "sponsor", "revenue", "delivered", "open", "ctr", "ctor", "unsub"], "rows": [["2026-07-01", "AWS - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 8312, 33.97, 9.44, 27.8, 0.17], ["2026-07-01", "PND - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 10861, 47.22, 25.78, 54.59, 0.12], ["2026-07-01", "AHS - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 10306, 46.62, 25.38, 54.44, 0.77], ["2026-07-02", "G&G - Peace wasn't where I expected to find it.", "Peace wasn't where I expected to find it.", "", "", 82476, 23.61, 0.14, 0.59, 0.11], ["2026-06-30", "AHS - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 7952, 57.86, 3.46, 5.98, 0.33], ["2026-06-30", "PND - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 8826, 57.01, 2.88, 5.05, 0.25], ["2026-06-30", "AWS - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 6717, 55.23, 1.53, 2.78, 0.3], ["2026-06-30", "G&G - I slept with a loaded pistol under my head.", "I slept with a loaded pistol under my head.", "", "", 82608, 25.09, 0.18, 0.73, 0.13], ["2026-06-29", "AWS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 8000, 48.7, 10.4, 21.36, 0.14], ["2026-06-29", "PND - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 9809, 54.68, 20.35, 37.21, 0.51], ["2026-06-29", "AHS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 8909, 59.51, 23.75, 39.91, 0.09], ["2026-06-29", "G&G - \"Shower Trick\" cuts heart attack risk by 95%", "\"Shower Trick\" cuts heart attack risk by 95%", "", "", 82578, 22.6, 0.92, 4.07, 0.09], ["2026-06-28", "AWS - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 5496, 53.6, 1.75, 3.26, 0.42], ["2026-06-28", "PND - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 7674, 60.1, 3.0, 4.99, 0.65], ["2026-06-28", "AHS - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 6557, 58.46, 3.08, 5.27, 0.47], ["2026-06-28", "G&G - I thought I had something to prove...", "I thought I had something to prove...", "", "", 82804, 40.39, 0.3, 0.74, 0.24], ["2026-06-27", "AHS - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 8108, 56.33, 19.84, 35.23, 0.12], ["2026-06-27", "PND - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 8673, 55.79, 19.79, 35.46, 0.18], ["2026-06-27", "AWS - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 6141, 49.89, 12.95, 25.95, 0.11], ["2026-06-27", "G&G - This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)", "This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)", "", "", 82698, 29.24, 0.55, 1.87, 0.11], ["2026-06-26", "AWS - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 4663, 60.03, 1.78, 2.97, 0.21], ["2026-06-26", "PND - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 7563, 57.38, 2.82, 4.91, 0.25], ["2026-06-26", "AHS - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 6344, 60.25, 2.55, 4.24, 0.17], ["2026-06-26", "G&G - Why Your Emergency Food Storage Could Be Slowly Killing Your Family", "Why Your Emergency Food Storage Could Be Slowly Killing Your Family", "", "", 81460, 37.79, 0.15, 0.41, 0.14], ["2026-06-25", "AHS - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 6542, 60.68, 3.39, 5.59, 0.31], ["2026-06-25", "PND - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 8352, 56.63, 19.25, 34.0, 0.12], ["2026-06-25", "AWS - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 4912, 58.18, 15.76, 27.08, 0.24], ["2026-06-25", "G&G - The #1 food on Trump's Mar-a-Lago bunker menu", "The #1 food on Trump's Mar-a-Lago bunker menu", "", "", 141067, 22.85, 0.2, 0.86, 0.12], ["2026-06-24", "AWS - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 4533, 26.69, 1.9, 7.11, 0.13], ["2026-06-24", "PND - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 4663, 43.38, 4.98, 11.47, 0.13], ["2026-06-24", "AHS - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 5141, 24.39, 3.27, 13.4, 0.04], ["2026-06-24", "G&G - Is their longevity secret drinking chocolate?", "Is their longevity secret drinking chocolate?", "", "", 4, 25.0, 0.0, 0.0, 0.0], ["2026-06-23", "AHS - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 5732, 78.73, 27.08, 34.39, 0.37], ["2026-06-23", "PND - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 6081, 70.89, 25.28, 35.65, 0.18], ["2026-06-23", "AWS - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 3967, 73.93, 20.52, 27.75, 0.25], ["2026-06-23", "G&G - Elon's bunker food isn't from Amazon", "Elon's bunker food isn't from Amazon", "", "", 170313, 19.52, 0.28, 1.43, 0.1], ["2026-06-20", "AWS - #1 heart attack sign is not chest pain, cholesterol, or BP", "#1 heart attack sign is not chest pain, cholesterol, or BP", "", "", 3342, 41.62, 26.06, 62.62, 0.21], ["2026-06-20", "PND - #1 heart attack sign is not chest pain, cholesterol, or BP", "#1 heart attack sign is not chest pain, cholesterol, or BP", "", "", 5001, 45.77, 31.03, 67.8, 1.72], ["2026-06-20", "G&G - Heart Attack Test: touch your feet like THIS (for 7 sec)", "Heart Attack Test: touch your feet like THIS (for 7 sec)", "iRollie/PhysioTru", 400, 172271, 21.18, 1.32, 6.23, 0.13]]};
 
-// Column indexes (A=0 ... K=10)
 const C = {DATE:0, KEY:1, CAMPAIGN:2, SPONSOR:3, REVENUE:4, DELIVERED:5,
            OPEN:6, CTR:7, CTOR:8, UNSUB:9, ECPM:10};
-
-const LISTS = ["G&G","AWS","AHS","PND"];
 
 let RAW = [];
 
@@ -184,12 +240,12 @@ function parseCSV(text){
 }
 
 function toNum(v){ if(v==null)return 0; const n=parseFloat(String(v).replace(/[$,%\s]/g,'')); return isNaN(n)?0:n; }
-function pct(v){ // returns a number in percent units
+function pct(v){
   if(v==null||v==='')return null;
   let s=String(v).trim();
   if(s.endsWith('%')) return toNum(s);
   const n=toNum(s);
-  return n<=1 ? n*100 : n; // handle fraction or already-percent
+  return n<=1 ? n*100 : n;
 }
 function listOf(key){
   const m=String(key).match(/^\s*(G&G|AWS|AHS|PND)\b/i);
@@ -200,103 +256,81 @@ function cleanTitle(key,campaign){
   t=t.replace(/^\s*(G&G|AWS|AHS|PND)\s*-\s*/i,'').trim();
   return t;
 }
-// Strip common sponsor/type prefixes so title variants converge
 function corePhrase(key,campaign){
   let t=cleanTitle(key,campaign).toLowerCase();
   t=t.replace(/^(jeff free book|jeff sands|free book|irollie|freeze dry|cardioclear|physiotru|eef|day \d+ email|#\d+)\s*[-:]\s*/gi,'');
   t=t.replace(/\(free book\)|\(1\)|\(2\)/g,'');
   t=t.replace(/[^a-z0-9]/g,'');
-  return t.slice(0,24); // first chunk of the meaningful phrase
+  return t.slice(0,24);
 }
-// BULLETPROOF GROUPING
-// Primary key = core title phrase (converges title variants across the 4 lists).
-// Date is used ONLY when the phrase is too generic to trust, so a one-day
-// timezone slip between platforms never splits a campaign.
-// If two DIFFERENT campaigns share a phrase AND are >2 days apart, the week
-// bucket keeps them separate.
 function weekBucket(date){
   const d=new Date(date); if(isNaN(d))return '';
-  // bucket by ~3-day window so same-campaign sends (which land within a day or two) match,
-  // but campaigns weeks apart don't.
-  return Math.floor(d.getTime()/ (3*864e5));
+  return Math.floor(d.getTime()/(3*864e5));
 }
 function baseKey(key,campaign,date){
   const phrase=corePhrase(key,campaign);
-  if(phrase && phrase.length>=6){
-    return phrase + '|' + weekBucket(date); // phrase + coarse time bucket
-  }
-  return (date||'').slice(0,10); // fallback: exact date
+  if(phrase && phrase.length>=6) return phrase+'|'+weekBucket(date);
+  return (date||'').slice(0,10);
 }
 function fmtInt(n){ return Math.round(n).toLocaleString(); }
 function fmtPct(n){ return n==null?null:(n).toFixed(2)+'%'; }
-function fmtMoney(n){ return '$'+ (Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); }
-function fmtM(n){ return n>=1e6 ? (n/1e6).toFixed(2)+'M' : (n>=1e3?(n/1e3).toFixed(0)+'K':fmtInt(n)); }
+function fmtMoney(n){ return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); }
+function fmtM(n){ return n>=1e6?(n/1e6).toFixed(2)+'M':(n>=1e3?(n/1e3).toFixed(0)+'K':fmtInt(n)); }
 
 async function loadData(){
   const tbody=document.getElementById('tbody');
   if(SHEET_CSV_URL && SHEET_CSV_URL.trim()!==''){
     tbody.innerHTML='<tr><td colspan="9" class="loading">Loading data…</td></tr>';
     try{
-      const res=await fetch(SHEET_CSV_URL+ (SHEET_CSV_URL.includes('?')?'&':'?') +'t='+Date.now());
+      const res=await fetch(SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
       const txt=await res.text();
       const rows=parseCSV(txt);
-      RAW = rows.slice(1).filter(r=>r.length>=11 && (r[C.KEY]||'').trim()!=='' );
+      RAW=rows.slice(1).filter(r=>r.length>=11&&(r[C.KEY]||'').trim()!=='');
       document.getElementById('updated').textContent='Updated '+new Date().toLocaleString()+' (live)';
       render(); return;
-    }catch(e){ /* fall back to embedded */ }
+    }catch(e){}
   }
-  // Embedded snapshot
-  RAW = EMBEDDED.rows.map(r=>{
+  RAW=EMBEDDED.rows.map(r=>{
     const o=[]; o[C.DATE]=r[0]; o[C.KEY]=r[1]; o[C.CAMPAIGN]=r[2]; o[C.SPONSOR]=r[3];
     o[C.REVENUE]=r[4]; o[C.DELIVERED]=r[5]; o[C.OPEN]=r[6]; o[C.CTR]=r[7];
     o[C.CTOR]=r[8]; o[C.UNSUB]=r[9]; o[C.ECPM]=''; return o;
   });
-  document.getElementById('updated').textContent='Snapshot · Jul 2, 2026';
+  document.getElementById('updated').textContent='Snapshot · Jul 3, 2026';
   render();
 }
 
 function withinRange(dstr,days){
   if(days>=9999)return true;
   const d=new Date(dstr); if(isNaN(d))return true;
-  const cutoff=Date.now()-days*864e5;
-  return d.getTime()>=cutoff;
+  return d.getTime()>=Date.now()-days*864e5;
 }
 
 function render(){
   const listF=document.getElementById('listFilter').value;
   const rangeF=parseInt(document.getElementById('rangeFilter').value,10);
-
-  // filter rows
   let rows=RAW.filter(r=>withinRange(r[C.DATE],rangeF));
   if(listF!=='ALL') rows=rows.filter(r=>listOf(r[C.KEY])===listF);
 
-  // group into campaigns (master = one per baseKey, children = each list row)
   const groups={};
   rows.forEach(r=>{
     const bk=baseKey(r[C.KEY],r[C.CAMPAIGN],r[C.DATE]);
     if(!groups[bk]) groups[bk]={title:cleanTitle(r[C.KEY],r[C.CAMPAIGN]),date:r[C.DATE],rows:[]};
     groups[bk].rows.push(r);
-    // keep earliest/representative date
     if(new Date(r[C.DATE])>new Date(groups[bk].date)) groups[bk].date=r[C.DATE];
   });
 
-  // build master aggregates
   const masters=Object.values(groups).map(g=>{
-    let delivered=0,revenue=0, wOpen=0,wCtr=0,wCtor=0,wUnsub=0;
+    let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0;
     g.rows.forEach(r=>{
       const d=toNum(r[C.DELIVERED]); delivered+=d; revenue+=toNum(r[C.REVENUE]);
-      wOpen += (pct(r[C.OPEN])||0)*d;
-      wCtr  += (pct(r[C.CTR])||0)*d;
-      wCtor += (pct(r[C.CTOR])||0)*d;
-      wUnsub+= (pct(r[C.UNSUB])||0)*d;
+      wOpen+=(pct(r[C.OPEN])||0)*d; wCtr+=(pct(r[C.CTR])||0)*d;
+      wCtor+=(pct(r[C.CTOR])||0)*d; wUnsub+=(pct(r[C.UNSUB])||0)*d;
     });
-    const openAvg = delivered? wOpen/delivered:0;
-    const ctrAvg  = delivered? wCtr/delivered:0;
-    const ctorAvg = delivered? wCtor/delivered:0;
-    const unsubAvg= delivered? wUnsub/delivered:0;
-    const ecpm = (revenue>0 && delivered>0)? revenue/(delivered/1000):0;
+    const openAvg=delivered?wOpen/delivered:0, ctrAvg=delivered?wCtr/delivered:0,
+          ctorAvg=delivered?wCtor/delivered:0, unsubAvg=delivered?wUnsub/delivered:0;
+    const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
     return {title:g.title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,unsubAvg,ecpm,rows:g.rows};
-  }).sort((a,b)=> new Date(b.date)-new Date(a.date));
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
   renderMonthly(masters);
@@ -304,7 +338,7 @@ function render(){
 }
 
 function renderKPIs(masters){
-  let delivered=0,revenue=0, wOpen=0,wCtr=0,wCtor=0,wUnsub=0, paid=0;
+  let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0,paid=0;
   masters.forEach(m=>{
     delivered+=m.delivered; revenue+=m.revenue; if(m.revenue>0)paid++;
     wOpen+=m.openAvg*m.delivered; wCtr+=m.ctrAvg*m.delivered;
@@ -312,8 +346,7 @@ function renderKPIs(masters){
   });
   const openAvg=delivered?wOpen/delivered:0, ctrAvg=delivered?wCtr/delivered:0,
         ctorAvg=delivered?wCtor/delivered:0, unsubAvg=delivered?wUnsub/delivered:0;
-  const ecpm= (revenue>0&&delivered>0)? revenue/(delivered/1000):0;
-
+  const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
   const k=[
     {label:'Revenue',num:fmtMoney(revenue),foot:paid+' sends paid'},
     {label:'ECPM avg',num:fmtMoney(ecpm),foot:'per 1k delivered'},
@@ -321,18 +354,18 @@ function renderKPIs(masters){
     {label:'CTR avg',num:fmtPct(ctrAvg),foot:'true engagement'},
     {label:'Open avg',num:fmtPct(openAvg),foot:'directional'},
     {label:'CTOR avg',num:fmtPct(ctorAvg),foot:'click-to-open'},
-    {label:'Unsub avg',num:fmtPct(unsubAvg),foot:'', bad: unsubAvg>0.3},
+    {label:'Unsub avg',num:fmtPct(unsubAvg),foot:'',bad:unsubAvg>0.3},
   ];
   document.getElementById('kpis').innerHTML=k.map(x=>
-    `<div class="kpi ${x.bad?'bad':''}"><div class="label">${x.label}</div>
+    `<div class="kpi${x.bad?' bad':''}"><div class="label">${x.label}</div>
      <div class="num">${x.num||'—'}</div><div class="foot">${x.foot||''}</div></div>`).join('');
 }
 
 function renderMonthly(masters){
-  // Build month buckets from master rows
+  // Build month buckets — only from actual data, no fabrication
   const months={};
   masters.forEach(m=>{
-    const mo=(m.date||'').slice(0,7); // 'YYYY-MM'
+    const mo=(m.date||'').slice(0,7);
     if(!mo||mo.length<7)return;
     if(!months[mo])months[mo]={revenue:0,delivered:0,sends:0,paid:0};
     months[mo].revenue+=m.revenue;
@@ -341,51 +374,55 @@ function renderMonthly(masters){
     if(m.revenue>0)months[mo].paid++;
   });
 
-  const sorted=Object.keys(months).sort().reverse(); // newest first
+  const sorted=Object.keys(months).sort().reverse();
+  const badge=document.getElementById('revBadge');
+
   if(!sorted.length){
-    document.getElementById('monthlyCards').innerHTML='<p style="color:var(--muted);font-size:13px">No data yet. Add revenue in the Google Sheet to see monthly totals.</p>';
-    document.getElementById('revChart').innerHTML='';
+    document.getElementById('revSummary').innerHTML='<span style="color:var(--muted);font-size:13px">No revenue data yet — add amounts in Column E of the Google Sheet.</span>';
+    document.getElementById('revTbody').innerHTML='<tr><td colspan="6" class="loading" style="padding:24px">No revenue logged yet.</td></tr>';
+    badge.textContent=sorted.length+' months';
     return;
   }
 
-  const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
   const nowMo=new Date().toISOString().slice(0,7);
+  const totalRev=sorted.reduce((s,k)=>s+months[k].revenue,0);
+  const totalDelivered=sorted.reduce((s,k)=>s+months[k].delivered,0);
+  const overallEcpm=(totalRev>0&&totalDelivered>0)?totalRev/(totalDelivered/1000):0;
+  const paidMonths=sorted.filter(k=>months[k].revenue>0).length;
+  const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
 
-  // Cards
-  const cards=sorted.map(mo=>{
+  // Summary bar
+  document.getElementById('revSummary').innerHTML=`
+    <div class="rs-item"><div class="rs-label">Total Revenue</div><div class="rs-val green">${totalRev>0?fmtMoney(totalRev):'—'}</div></div>
+    <div class="rs-divider"></div>
+    <div class="rs-item"><div class="rs-label">Overall ECPM</div><div class="rs-val">${overallEcpm>0?fmtMoney(overallEcpm):'—'}</div></div>
+    <div class="rs-divider"></div>
+    <div class="rs-item"><div class="rs-label">Months Tracked</div><div class="rs-val">${sorted.length}</div></div>
+    <div class="rs-divider"></div>
+    <div class="rs-item"><div class="rs-label">Months with Revenue</div><div class="rs-val">${paidMonths}</div></div>`;
+
+  badge.textContent=sorted.length+' months';
+
+  // Table rows
+  let html='';
+  sorted.forEach(mo=>{
     const d=months[mo];
     const ecpm=(d.revenue>0&&d.delivered>0)?d.revenue/(d.delivered/1000):0;
     const barW=maxRev>0?Math.round((d.revenue/maxRev)*100):0;
-    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'short',year:'numeric'});
-    const isCurrent=mo===nowMo;
-    return `<div class="month-card${isCurrent?' current':''}">
-      <div class="mo-label">${label}${isCurrent?' <span class="badge">current</span>':''}</div>
-      <div class="mo-rev${d.revenue===0?' zero':''}">${d.revenue>0?fmtMoney(d.revenue):'—'}</div>
-      <div class="mo-meta">${d.sends} sends · ${d.paid} paid</div>
-      ${ecpm>0?`<div class="mo-ecpm">ECPM ${fmtMoney(ecpm)}</div>`:''}
-      <div class="mo-bar" style="width:${barW}%"></div>
-    </div>`;
-  }).join('');
-  document.getElementById('monthlyCards').innerHTML=cards;
-
-  // Horizontal bar chart (oldest → newest)
-  const chartMos=[...sorted].reverse();
-  const chartMax=Math.max(...chartMos.map(k=>months[k].revenue),1);
-  let chartHtml='<div class="rev-chart-title">Revenue by Month (bar = $, hover for ECPM)</div>';
-  chartMos.forEach(mo=>{
-    const d=months[mo];
-    const pct=chartMax>0?Math.round((d.revenue/chartMax)*100):0;
-    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'short',year:'2-digit'});
-    const ecpm=(d.revenue>0&&d.delivered>0)?d.revenue/(d.delivered/1000):0;
-    const title=`${fmtMoney(d.revenue)} · ECPM ${ecpm>0?fmtMoney(ecpm):'—'} · ${d.sends} sends`;
-    chartHtml+=`<div class="bar-row" title="${title}">
-      <div class="bar-mo">${label}</div>
-      <div class="bar-track"><div class="bar-fill${d.revenue===0?' zero':''}" style="width:${pct}%"></div></div>
-      <div class="bar-val">${d.revenue>0?fmtMoney(d.revenue):'—'}</div>
-      <div class="bar-sends">${d.sends} sends</div>
-    </div>`;
+    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'long',year:'numeric'});
+    const isCur=mo===nowMo;
+    html+=`<tr>
+      <td class="mo-name">${label}${isCur?'<span class="mo-badge-cur">current</span>':''}</td>
+      <td class="r mo-rev-val${d.revenue===0?' zero':''}">${d.revenue>0?fmtMoney(d.revenue):'—'}</td>
+      <td class="r mo-ecpm${ecpm===0?' zero':''}">${ecpm>0?fmtMoney(ecpm):'—'}</td>
+      <td class="r">${d.sends}</td>
+      <td class="r hide-sm">${d.paid}</td>
+      <td class="mo-bar-cell hide-sm">
+        <div class="mo-bar-track"><div class="mo-bar-fill${d.revenue===0?' zero':''}" style="width:${barW}%"></div></div>
+      </td>
+    </tr>`;
   });
-  document.getElementById('revChart').innerHTML=chartHtml;
+  document.getElementById('revTbody').innerHTML=html;
 }
 
 function renderTable(masters){
@@ -393,10 +430,10 @@ function renderTable(masters){
   if(!masters.length){ tb.innerHTML='<tr><td colspan="9" class="loading">No data for this filter.</td></tr>'; return; }
   let html='';
   masters.forEach((m,i)=>{
-    const ctrCls = m.ctrAvg>=1 ? 'good':'';
-    const unsubCls = m.unsubAvg>0.3 ? 'bad':'';
-    const rev = m.revenue>0? `<span class="rev">${fmtMoney(m.revenue)}</span>` : '<span class="dash">—</span>';
-    const ecpm= m.ecpm>0? `<span class="rev">${fmtMoney(m.ecpm)}</span>` : '<span class="dash">—</span>';
+    const ctrCls=m.ctrAvg>=1?'good':'';
+    const unsubCls=m.unsubAvg>0.3?'bad':'';
+    const rev=m.revenue>0?`<span class="rev">${fmtMoney(m.revenue)}</span>`:'<span class="dash">—</span>';
+    const ecpm=m.ecpm>0?`<span class="rev">${fmtMoney(m.ecpm)}</span>`:'<span class="dash">—</span>';
     html+=`<tr class="master" data-i="${i}">
       <td class="l"><span class="caret">▶</span> ${m.date||''}</td>
       <td class="l title-cell" title="${m.title.replace(/"/g,'&quot;')}">${m.title}</td>
@@ -408,9 +445,8 @@ function renderTable(masters){
       <td>${rev}</td>
       <td>${ecpm}</td>
     </tr>`;
-    // children — one per list row
     const order={'G&G':0,'AWS':1,'AHS':2,'PND':3,'OTHER':4};
-    const kids=[...m.rows].sort((a,b)=> (order[listOf(a[C.KEY])]??9)-(order[listOf(b[C.KEY])]??9));
+    const kids=[...m.rows].sort((a,b)=>(order[listOf(a[C.KEY])]??9)-(order[listOf(b[C.KEY])]??9));
     kids.forEach(r=>{
       const lst=listOf(r[C.KEY]);
       const d=toNum(r[C.DELIVERED]);
@@ -430,7 +466,6 @@ function renderTable(masters){
     });
   });
   tb.innerHTML=html;
-
   document.querySelectorAll('.master').forEach(row=>{
     row.addEventListener('click',()=>{
       const i=row.getAttribute('data-i');
@@ -439,6 +474,14 @@ function renderTable(masters){
     });
   });
 }
+
+// Collapsible Monthly Revenue toggle
+document.getElementById('revHdr').addEventListener('click',()=>{
+  const hdr=document.getElementById('revHdr');
+  const body=document.getElementById('revBody');
+  hdr.classList.toggle('open');
+  body.classList.toggle('open');
+});
 
 document.getElementById('listFilter').addEventListener('change',render);
 document.getElementById('rangeFilter').addEventListener('change',render);

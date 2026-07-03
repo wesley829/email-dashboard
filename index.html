@@ -125,7 +125,10 @@
   .title-cell{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .affiliate-cell{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .child td{background:#FAFBFA;font-weight:400;color:#374151;font-size:12px}
-  .child td.listname{padding-left:32px;text-align:left;color:var(--green);font-weight:600}
+  .child-title-cell{text-align:left;padding-left:32px!important}
+  .listname-inline{display:inline-block;color:var(--green);font-weight:700;font-size:11px;
+    background:var(--green-soft);border-radius:5px;padding:1px 7px;margin-right:7px;letter-spacing:.2px}
+  .child-campaign-title{font-size:12px;color:#374151;font-weight:500}
   .child{display:none}
   .child.show{display:table-row;animation:fadeIn .18s ease}
   .child-offer td{border-top:1px solid var(--border)!important;background:#F3F6F3;padding:7px 10px 8px!important}
@@ -192,9 +195,7 @@
         <thead>
           <tr>
             <th class="l">Date</th>
-            <th class="l">Campaign</th>
-            <th class="l hide-sm">Sponsor</th>
-            <th class="l hide-sm">Offer</th>
+            <th class="l" colspan="3">Campaign</th>
             <th>Sent</th>
             <th>Open %</th>
             <th>CTR %</th>
@@ -376,12 +377,13 @@ function withinRange(dstr,days){
 function render(){
   let rows=RAW;
 
+  // Group ALL sends by calendar date — one master row per day
   const groups={};
   rows.forEach(r=>{
-    const bk=baseKey(r[C.KEY],r[C.CAMPAIGN],r[C.DATE]);
-    if(!groups[bk])groups[bk]={title:cleanTitle(r[C.KEY],r[C.CAMPAIGN]),date:r[C.DATE],rows:[]};
-    groups[bk].rows.push(r);
-    if(new Date(r[C.DATE])>new Date(groups[bk].date))groups[bk].date=r[C.DATE];
+    const date=(r[C.DATE]||'').slice(0,10);
+    if(!date)return;
+    if(!groups[date])groups[date]={date,rows:[]};
+    groups[date].rows.push(r);
   });
 
   const masters=Object.values(groups).map(g=>{
@@ -393,16 +395,13 @@ function render(){
     });
     const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
           ctorAvg=delivered?wCtor/delivered:0;
-    const totalUnsubs=wUnsub; // raw count summed across all child rows
+    const totalUnsubs=wUnsub;
     const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
-    const rps=revenue>0?revenue/g.rows.length:0;
-    // grab offer name (Col K), offer link (Col L) and sponsor (Col D) from first row that has one
-    const offerRow=g.rows.find(r=>(r[C.OFFER_LINK]||r[C.OFFER]||'').trim()!=='');
-    const sponsorRow=g.rows.find(r=>(r[C.SPONSOR]||'').trim()!=='');
-    const offerName=(offerRow&&offerRow[C.OFFER])||'';
-    const affiliateUrl=(offerRow&&offerRow[C.OFFER_LINK])||'';
-    const sponsor=(sponsorRow&&sponsorRow[C.SPONSOR])||'';
-    return{title:g.title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,ecpm,rps,affiliateUrl,offerName,sponsor,rows:g.rows};
+    // Use G&G row title as the master title (largest list, most representative)
+    const ggRow=g.rows.find(r=>listOf(r[C.KEY])==='G&G');
+    const titleRow=ggRow||g.rows[0];
+    const title=cleanTitle(titleRow[C.KEY],titleRow[C.CAMPAIGN]);
+    return{title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,ecpm,rows:g.rows};
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
@@ -535,20 +534,9 @@ function renderTable(masters){
     const ctrCls=m.ctrAvg>=1?'good':'';
     const rev=m.revenue>0?`<span class="rev">${fmtMoney(m.revenue)}</span>`:'<span class="dash">—</span>';
     const shortTitle=truncate(m.title,40);
-    // Sponsor cell (Col D) — plain text
-    const sponsorCell = m.sponsor
-      ? `<span style="font-size:12px;color:var(--fg)">${truncate(m.sponsor,22)}</span>`
-      : '<span class="dash">—</span>';
-    // Offer cell — Col K name hyperlinked to Col L URL
-    const offerLabel = m.offerName || m.sponsor || 'View Offer';
-    const offerCell = m.affiliateUrl
-      ? `<a href="${m.affiliateUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600;font-size:12px">${truncate(offerLabel,22)} ↗</a>`
-      : (m.offerName ? `<span style="font-size:12px;color:var(--muted)">${truncate(m.offerName,22)}</span>` : '<span class="dash">—</span>');
     html+=`<tr class="master" data-i="${i}">
       <td class="l"><span class="caret">▶</span> ${m.date||''}</td>
-      <td class="l title-cell" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
-      <td class="l hide-sm">${sponsorCell}</td>
-      <td class="l hide-sm">${offerCell}</td>
+      <td class="l title-cell" colspan="3" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
       <td>${fmtInt(m.delivered)}</td>
       <td>${fmtPct(m.openAvg)}</td>
       <td class="${ctrCls}">${fmtPct(m.ctrAvg)}</td>
@@ -556,27 +544,40 @@ function renderTable(masters){
       <td>${m.totalUnsubs>0?fmtInt(m.totalUnsubs):'<span class="dash">—</span>'}</td>
       <td>${rev}</td>
     </tr>`;
+    // Sort child rows: G&G first, then AWS, AHS, PND, then others
     const order={'G&G':0,'AWS':1,'AHS':2,'PND':3,'OTHER':4};
     const kids=[...m.rows].sort((a,b)=>(order[listOf(a[C.KEY])]??9)-(order[listOf(b[C.KEY])]??9));
     kids.forEach(r=>{
       const lst=listOf(r[C.KEY]);
+      const childTitle=cleanTitle(r[C.KEY],r[C.CAMPAIGN]);
       const d=toNum(r[C.DELIVERED]);
       const ctr=pct(r[C.CTR]);
       const rawUnsubs=toNum(r[C.UNSUBS]||0);
+      // Per-row sponsor and offer
+      const sp=(r[C.SPONSOR]||'').trim();
+      const ofNm=(r[C.OFFER]||'').trim();
+      const ofUrl=(r[C.OFFER_LINK]||'').trim();
+      const offerHtml=ofUrl
+        ? `<a href="${ofUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600">${truncate(ofNm||sp||'Offer',20)} ↗</a>`
+        : (ofNm?`<span style="color:var(--muted)">${truncate(ofNm,20)}</span>`:'');
+      const metaHtml=(sp||offerHtml)
+        ? `<span style="color:var(--muted);font-size:11px;margin-left:6px">${sp?truncate(sp,16):''}${sp&&offerHtml?' · ':''}${offerHtml}</span>`
+        : '';
       html+=`<tr class="child" data-p="${i}">
         <td></td>
-        <td class="listname">${lst}</td>
-        <td class="hide-sm"></td>
-        <td class="hide-sm"></td>
+        <td class="child-title-cell" colspan="3">
+          <span class="listname-inline">${lst}</span>
+          <span class="child-campaign-title">${truncate(childTitle,45)}</span>
+          ${metaHtml}
+        </td>
         <td>${fmtInt(d)}</td>
         <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>
-        <td class="${ctr>=1?'good':''}">${ fmtPct(ctr)||'—'}</td>
+        <td class="${ctr>=1?'good':''}">${fmtPct(ctr)||'—'}</td>
         <td>${fmtPct(pct(r[C.CTOR]))||'—'}</td>
         <td>${rawUnsubs>0?fmtInt(rawUnsubs):'<span class="dash">—</span>'}</td>
         <td>${toNum(r[C.REVENUE])>0?fmtMoney(toNum(r[C.REVENUE])):'<span class="dash">—</span>'}</td>
       </tr>`;
     });
-
   });
   tb.innerHTML=html;
   document.querySelectorAll('.master').forEach(row=>{

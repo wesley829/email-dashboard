@@ -203,18 +203,19 @@
             <th>CTR %</th>
             <th>CTOR %</th>
             <th>Unsubs</th>
+            <th class="hide-sm">Spam</th>
             <th>Rev</th>
           </tr>
         </thead>
         <tbody id="tbody">
-          <tr><td colspan="10" class="loading">Loading data…</td></tr>
+          <tr><td colspan="11" class="loading">Loading data…</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
   <div class="note">
-    Green values = above-average engagement &nbsp;·&nbsp; Red = above unsub threshold &nbsp;·&nbsp; Dashes = revenue not yet logged.<br>
+    Green CTR = above 1% &nbsp;·&nbsp; Red Spam = above 0.08% threshold (ISP alert level) &nbsp;·&nbsp; Dashes = not yet logged.<br>
     Tap any campaign row to expand list-level detail.
   </div>
 
@@ -269,7 +270,7 @@ const EMBEDDED = {"cols":["date","key","campaign","sponsor","revenue","delivered
 ]};
 
 // Sheet cols: A=Date, B=Key, C=Campaign, D=Sponsor, E=Revenue, F=Delivered, G=Open%, H=CTR%, I=CTOR%, J=Unsub, K=Offer(name), L=Offer Link(URL)
-const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUBS:9,OFFER:10,OFFER_LINK:11};
+const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUBS:9,OFFER:10,OFFER_LINK:11,SPAM:12,BOUNCES:13};
 let RAW=[];
 
 // ── Parsers ──
@@ -360,7 +361,7 @@ async function loadData(){
       const res=await fetch(SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
       const txt=await res.text();
       const rows=parseCSV(txt);
-      RAW=rows.slice(1).filter(r=>r.length>=9&&(r[C.KEY]||'').trim()!=='');
+      RAW=rows.slice(1).filter(r=>r.length>=6&&(r[C.KEY]||'').trim()!=='');
       document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString()+' (live)';
       render();return;
     }catch(e){}
@@ -368,7 +369,7 @@ async function loadData(){
   RAW=EMBEDDED.rows.map(r=>{
     const o=[];o[C.DATE]=r[0];o[C.KEY]=r[1];o[C.CAMPAIGN]=r[2];o[C.SPONSOR]=r[3];
     o[C.REVENUE]=r[4];o[C.DELIVERED]=r[5];o[C.OPEN]=r[6];o[C.CTR]=r[7];
-    o[C.CTOR]=r[8];o[C.UNSUBS]=r[9];o[C.OFFER]=r[10]||'';o[C.OFFER_LINK]=r[11]||'';return o;
+    o[C.CTOR]=r[8];o[C.UNSUBS]=r[9];o[C.OFFER]=r[10]||'';o[C.OFFER_LINK]=r[11]||'';o[C.SPAM]=r[12]||0;o[C.BOUNCES]=r[13]||0;return o;
   });
   document.getElementById('updated').textContent='Snapshot · Jul 3, 2026';
   render();
@@ -393,11 +394,12 @@ function render(){
   });
 
   const masters=Object.values(groups).map(g=>{
-    let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0;
+    let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0,wSpam=0,wBounces=0;
     g.rows.forEach(r=>{
       const d=toNum(r[C.DELIVERED]);delivered+=d;revenue+=toNum(r[C.REVENUE]);
       wOpen+=(pct(r[C.OPEN])||0)*d;wCtr+=(pct(r[C.CTR])||0)*d;
       wCtor+=(pct(r[C.CTOR])||0)*d;wUnsub+=toNum(r[C.UNSUBS]||0);
+      wSpam+=toNum(r[C.SPAM]||0);wBounces+=toNum(r[C.BOUNCES]||0);
     });
     const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
           ctorAvg=delivered?wCtor/delivered:0;
@@ -407,7 +409,7 @@ function render(){
     const ggRow=g.rows.find(r=>listOf(r[C.KEY])==='G&G');
     const titleRow=ggRow||g.rows[0];
     const title=cleanTitle(titleRow[C.KEY],titleRow[C.CAMPAIGN]);
-    return{title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,ecpm,rows:g.rows};
+    return{title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,totalSpam:wSpam,totalBounces:wBounces,ecpm,rows:g.rows};
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
@@ -415,11 +417,11 @@ function render(){
 }
 
 function renderKPIs(masters){
-  let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,totalUnsubs=0,paid=0;
+  let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,totalUnsubs=0,totalSpam=0,paid=0;
   masters.forEach(m=>{
     delivered+=m.delivered;revenue+=m.revenue;if(m.revenue>0)paid++;
     wOpen+=m.openAvg*m.delivered;wCtr+=m.ctrAvg*m.delivered;
-    wCtor+=m.ctorAvg*m.delivered;totalUnsubs+=m.totalUnsubs;
+    wCtor+=m.ctorAvg*m.delivered;totalUnsubs+=m.totalUnsubs;totalSpam+=m.totalSpam||0;
   });
   const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
         ctorAvg=delivered?wCtor/delivered:0;
@@ -433,12 +435,15 @@ function renderKPIs(masters){
   const ctorSpark=recent.map(m=>m.ctorAvg);
   const unsubSpark=recent.map(m=>m.totalUnsubs);
 
+  const spamRate=delivered>0?(totalSpam/delivered)*100:0;
+  const spamBad=spamRate>0.08;
   const kpis=[
     {label:'Revenue',val:revenue,fmt:v=>fmtMoney(v),foot:paid+' paid sends',spark:null,id:'kpi-rev'},
     {label:'CTR avg',val:ctrAvg,fmt:v=>fmtPct(v),foot:'true engagement',spark:ctrSpark,id:'kpi-ctr'},
     {label:'Open avg',val:openAvg,fmt:v=>fmtPct(v),foot:'directional',spark:openSpark,id:'kpi-open'},
     {label:'CTOR avg',val:ctorAvg,fmt:v=>fmtPct(v),foot:'click-to-open',spark:ctorSpark,id:'kpi-ctor'},
     {label:'Total Unsubs',val:totalUnsubs,fmt:v=>fmtInt(v),foot:'across all sends',spark:unsubSpark,bad:false,id:'kpi-unsub'},
+    {label:'Spam Rate',val:spamRate,fmt:v=>v.toFixed(3)+'%',foot:spamBad?'⚠ above 0.08% threshold':'safe < 0.08%',spark:null,bad:spamBad,id:'kpi-spam'},
   ];
 
   document.getElementById('kpis').innerHTML=kpis.map(k=>
@@ -534,7 +539,7 @@ function renderMonthly(masters){
 function truncate(s,n){return s.length>n?s.slice(0,n)+'…':s;}
 function renderTable(masters){
   const tb=document.getElementById('tbody');
-  if(!masters.length){tb.innerHTML='<tr><td colspan="10" class="loading">No data for this filter.</td></tr>';return;}
+  if(!masters.length){tb.innerHTML='<tr><td colspan="11" class="loading">No data for this filter.</td></tr>';return;}
   let html='';
   masters.forEach((m,i)=>{
     const ctrCls=m.ctrAvg>=1?'good':'';
@@ -551,6 +556,9 @@ function renderTable(masters){
     const offerCell=mOfferUrl
       ?`<a href="${mOfferUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600;font-size:12px">${truncate(offerLabel,22)} ↗</a>`
       :(mOfferName?`<span style="font-size:12px;color:var(--muted)">${truncate(mOfferName,22)}</span>`:'<span class="dash">—</span>');
+    const mSpamRate=m.delivered>0?((m.totalSpam||0)/m.delivered)*100:0;
+    const spamCls=mSpamRate>0.08?'bad':(mSpamRate>0?'':'dash');
+    const spamDisp=m.totalSpam>0?`<span class="${mSpamRate>0.08?'bad':''}">⚠ ${mSpamRate.toFixed(3)}%</span>`:'<span class="dash">—</span>';
     html+=`<tr class="master" data-i="${i}">
       <td class="l"><span class="caret">▶</span> ${m.date||''}</td>
       <td class="l title-cell" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
@@ -561,6 +569,7 @@ function renderTable(masters){
       <td class="${ctrCls}">${fmtPct(m.ctrAvg)}</td>
       <td>${fmtPct(m.ctorAvg)}</td>
       <td>${m.totalUnsubs>0?fmtInt(m.totalUnsubs):'<span class="dash">—</span>'}</td>
+      <td class="hide-sm">${spamDisp}</td>
       <td>${rev}</td>
     </tr>`;
     // Sort child rows: G&G first, then AWS, AHS, PND, then others
@@ -582,6 +591,7 @@ function renderTable(masters){
         <td class="${ctr>=1?'good':''}">${fmtPct(ctr)||'—'}</td>
         <td>${fmtPct(pct(r[C.CTOR]))||'—'}</td>
         <td>${rawUnsubs>0?fmtInt(rawUnsubs):'<span class="dash">—</span>'}</td>
+        <td class="hide-sm"><span class="dash">—</span></td>
         <td>${toNum(r[C.REVENUE])>0?fmtMoney(toNum(r[C.REVENUE])):'<span class="dash">—</span>'}</td>
       </tr>`;
     });

@@ -176,53 +176,11 @@
   </header>
 
   <div class="controls">
-    <select id="listFilter">
-      <option value="ALL">All lists</option>
-      <option value="G&G">G&amp;G (Beehiiv)</option>
-      <option value="AWS">AWS</option>
-      <option value="AHS">AHS</option>
-      <option value="PND">PND</option>
-    </select>
-    <select id="rangeFilter">
-      <option value="30">Last 30 days</option>
-      <option value="7">Last 7 days</option>
-      <option value="90">Last 90 days</option>
-      <option value="9999" selected>All time</option>
-    </select>
     <button class="refresh" id="refreshBtn"><span id="refreshIcon">↻</span> <span id="refreshLabel">Refresh</span></button>
   </div>
 
   <!-- KPI Scorecards -->
   <div class="kpis" id="kpis"></div>
-
-  <!-- Monthly Revenue — collapsible -->
-  <div class="section-hdr" id="revHdr">
-    <div class="section-title">
-      <span class="section-caret">▶</span>
-      Monthly Revenue
-      <span class="section-badge" id="revBadge">click to expand</span>
-    </div>
-  </div>
-  <div class="section-body" id="revBody">
-    <div class="rev-summary" id="revSummary"></div>
-    <div class="monthly-table-wrap">
-      <div class="table-scroll">
-        <table class="monthly-table">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th class="r">Revenue</th>
-              <th class="r">ECPM</th>
-              <th class="r">Sends</th>
-              <th class="r hide-sm">Paid</th>
-              <th class="mo-bar-cell hide-sm">vs. Best</th>
-            </tr>
-          </thead>
-          <tbody id="revTbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
   <hr class="section-divider">
 
@@ -254,7 +212,7 @@
 
   <div class="note">
     Green values = above-average engagement &nbsp;·&nbsp; Red = above unsub threshold &nbsp;·&nbsp; Dashes = revenue not yet logged.<br>
-    Tap any campaign row to expand list-level detail. Tap <strong>Monthly Revenue</strong> to expand the revenue breakdown.
+    Tap any campaign row to expand list-level detail.
   </div>
 
 </div>
@@ -403,7 +361,7 @@ async function loadData(){
   RAW=EMBEDDED.rows.map(r=>{
     const o=[];o[C.DATE]=r[0];o[C.KEY]=r[1];o[C.CAMPAIGN]=r[2];o[C.SPONSOR]=r[3];
     o[C.REVENUE]=r[4];o[C.DELIVERED]=r[5];o[C.OPEN]=r[6];o[C.CTR]=r[7];
-    o[C.CTOR]=r[8];o[C.UNSUBS]=r[9];o[C.ECPM]=r[10]||'';o[C.AFFILIATE]=r[11]||'';return o;
+    o[C.CTOR]=r[8];o[C.UNSUBS]=r[9];o[C.OFFER]=r[10]||'';o[C.OFFER_LINK]=r[11]||'';return o;
   });
   document.getElementById('updated').textContent='Snapshot · Jul 3, 2026';
   render();
@@ -416,10 +374,7 @@ function withinRange(dstr,days){
 }
 
 function render(){
-  const listF=document.getElementById('listFilter').value;
-  const rangeF=parseInt(document.getElementById('rangeFilter').value,10);
-  let rows=RAW.filter(r=>withinRange(r[C.DATE],rangeF));
-  if(listF!=='ALL')rows=rows.filter(r=>listOf(r[C.KEY])===listF);
+  let rows=RAW;
 
   const groups={};
   rows.forEach(r=>{
@@ -451,7 +406,6 @@ function render(){
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
-  renderMonthly(masters);
   renderTable(masters);
 }
 
@@ -476,9 +430,6 @@ function renderKPIs(masters){
 
   const kpis=[
     {label:'Revenue',val:revenue,fmt:v=>fmtMoney(v),foot:paid+' paid sends',spark:null,id:'kpi-rev'},
-    {label:'ECPM avg',val:ecpm,fmt:v=>fmtMoney(v),foot:'per 1k delivered',spark:null,id:'kpi-ecpm'},
-    {label:'Rev / Send',val:rps,fmt:v=>fmtMoney(v),foot:'avg per paid send',spark:null,id:'kpi-rps'},
-    {label:'Delivered',val:delivered,fmt:v=>fmtM(v),foot:masters.length+' campaigns',spark:null,id:'kpi-del'},
     {label:'CTR avg',val:ctrAvg,fmt:v=>fmtPct(v),foot:'true engagement',spark:ctrSpark,id:'kpi-ctr'},
     {label:'Open avg',val:openAvg,fmt:v=>fmtPct(v),foot:'directional',spark:openSpark,id:'kpi-open'},
     {label:'CTOR avg',val:ctorAvg,fmt:v=>fmtPct(v),foot:'click-to-open',spark:ctorSpark,id:'kpi-ctor'},
@@ -638,13 +589,7 @@ function renderTable(masters){
 }
 
 // Collapsible Monthly Revenue
-document.getElementById('revHdr').addEventListener('click',()=>{
-  document.getElementById('revHdr').classList.toggle('open');
-  document.getElementById('revBody').classList.toggle('open');
-});
 
-document.getElementById('listFilter').addEventListener('change',render);
-document.getElementById('rangeFilter').addEventListener('change',render);
 document.getElementById('refreshBtn').addEventListener('click', async function() {
   const btn = document.getElementById('refreshBtn');
   const icon = document.getElementById('refreshIcon');

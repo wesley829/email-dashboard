@@ -571,18 +571,18 @@ function renderTable(masters){
     const mSpamRate=m.delivered>0?((m.totalSpam||0)/m.delivered)*100:0;
     const spamDisp=m.totalSpam>0
       ?(mSpamRate>0.08
-        ?`<span class="danger-chip">⚠ ${mSpamRate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.<br>ISPs may throttle or block<br>your sending domain.</span></span>`
+        ?`<span class="danger-chip">${mSpamRate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.<br>ISPs may throttle or block<br>your sending domain.</span></span>`
         :`<span style="font-size:12px">${mSpamRate.toFixed(3)}%</span>`)
       :'<span class="dash">—</span>';
     const mBounceRate=m.delivered>0?((m.totalBounces||0)/m.delivered)*100:0;
     const bouncesDisp=(m.totalBounces||0)>0
       ?(mBounceRate>2
-        ?`<span class="danger-chip">⚠ ${fmtInt(m.totalBounces)}<span class="tip">Bounce rate above 2%.<br>High bounces hurt sender<br>reputation and deliverability.</span></span>`
+        ?`<span class="danger-chip">${fmtInt(m.totalBounces)}<span class="tip">Bounce rate above 2%.<br>High bounces hurt sender<br>reputation and deliverability.</span></span>`
         :fmtInt(m.totalBounces))
       :'<span class="dash">—</span>';
     const unsubDisp=m.totalUnsubs>0
       ?(m.totalUnsubs>500
-        ?`<span class="danger-chip">⚠ ${fmtInt(m.totalUnsubs)}<span class="tip">Unusually high unsub count.<br>May indicate list fatigue<br>or off-brand content.</span></span>`
+        ?`<span class="danger-chip">${fmtInt(m.totalUnsubs)}<span class="tip">Unusually high unsub count.<br>May indicate list fatigue<br>or off-brand content.</span></span>`
         :fmtInt(m.totalUnsubs))
       :'<span class="dash">—</span>';
     html+=`<tr class="master" data-i="${i}">
@@ -617,9 +617,9 @@ function renderTable(masters){
         <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>
         <td class="${ctr>=1?'good':''}">${fmtPct(ctr)||'—'}</td>
         <td>${fmtPct(pct(r[C.CTOR]))||'—'}</td>
-        <td>${(()=>{const u=rawUnsubs;return u>500?`<span class="danger-chip">⚠ ${fmtInt(u)}<span class="tip">Unusually high unsub count.<br>May indicate list fatigue<br>or off-brand content.</span></span>`:u>0?fmtInt(u):'<span class="dash">—</span>';})()}</td>
-        <td>${(()=>{const b=toNum(r[C.BOUNCES]||0);const del=toNum(r[C.DELIVERED]);const br=del>0?(b/del)*100:0;return b>0?(br>2?`<span class="danger-chip">⚠ ${fmtInt(b)}<span class="tip">Bounce rate above 2%.<br>High bounces hurt sender<br>reputation and deliverability.</span></span>`:fmtInt(b)):'<span class="dash">—</span>';})()}</td>
-        <td>${(()=>{const sp=toNum(r[C.SPAM]||0);const del=toNum(r[C.DELIVERED]);const rate=del>0?(sp/del)*100:0;return sp>0?(rate>0.08?`<span class="danger-chip">⚠ ${rate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.<br>ISPs may throttle or block<br>your sending domain.</span></span>`:`<span style="font-size:12px">${rate.toFixed(3)}%</span>`):'<span class="dash">—</span>';})()}</td>
+        <td>${(()=>{const u=rawUnsubs;return u>500?`<span class="danger-chip">${fmtInt(u)}<span class="tip">Unusually high unsub count.<br>May indicate list fatigue<br>or off-brand content.</span></span>`:u>0?fmtInt(u):'<span class="dash">—</span>';})()}</td>
+        <td>${(()=>{const b=toNum(r[C.BOUNCES]||0);const del=toNum(r[C.DELIVERED]);const br=del>0?(b/del)*100:0;return b>0?(br>2?`<span class="danger-chip">${fmtInt(b)}<span class="tip">Bounce rate above 2%.<br>High bounces hurt sender<br>reputation and deliverability.</span></span>`:fmtInt(b)):'<span class="dash">—</span>';})()}</td>
+        <td>${(()=>{const sp=toNum(r[C.SPAM]||0);const del=toNum(r[C.DELIVERED]);const rate=del>0?(sp/del)*100:0;return sp>0?(rate>0.08?`<span class="danger-chip">${rate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.<br>ISPs may throttle or block<br>your sending domain.</span></span>`:`<span style="font-size:12px">${rate.toFixed(3)}%</span>`):'<span class="dash">—</span>';})()}</td>
         <td>${toNum(r[C.REVENUE])>0?fmtMoney(toNum(r[C.REVENUE])):'<span class="dash">—</span>'}</td>
       </tr>`;
     });

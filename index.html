@@ -195,7 +195,9 @@
         <thead>
           <tr>
             <th class="l">Date</th>
-            <th class="l" colspan="3">Campaign</th>
+            <th class="l">Campaign</th>
+            <th class="l hide-sm">Sponsor</th>
+            <th class="l hide-sm">Offer</th>
             <th>Sent</th>
             <th>Open %</th>
             <th>CTR %</th>
@@ -293,6 +295,10 @@ function pct(v){
 function listOf(key){
   const m=String(key).match(/^\s*(G&G|AWS|AHS|PND)\b/i);
   return m?m[1].toUpperCase():"OTHER";
+}
+function listFullName(abbr){
+  const map={'G&G':'Grits & Gear','AWS':'American Wealth Secrets','AHS':'American Health Secrets','PND':'Pulse News Daily','OTHER':'Other'};
+  return map[abbr]||abbr;
 }
 function cleanTitle(key,campaign){
   let t=(campaign&&campaign.trim())?campaign:String(key);
@@ -534,9 +540,22 @@ function renderTable(masters){
     const ctrCls=m.ctrAvg>=1?'good':'';
     const rev=m.revenue>0?`<span class="rev">${fmtMoney(m.revenue)}</span>`:'<span class="dash">—</span>';
     const shortTitle=truncate(m.title,40);
+    // Sponsor and Offer from first child row that has them
+    const spRow=m.rows.find(r=>(r[C.SPONSOR]||'').trim()!=='');
+    const ofRow=m.rows.find(r=>(r[C.OFFER_LINK]||r[C.OFFER]||'').trim()!=='');
+    const mSponsor=(spRow&&spRow[C.SPONSOR])||'';
+    const mOfferName=(ofRow&&ofRow[C.OFFER])||'';
+    const mOfferUrl=(ofRow&&ofRow[C.OFFER_LINK])||'';
+    const sponsorCell=mSponsor?`<span style="font-size:12px;color:var(--fg)">${truncate(mSponsor,22)}</span>`:'<span class="dash">—</span>';
+    const offerLabel=mOfferName||mSponsor||'View Offer';
+    const offerCell=mOfferUrl
+      ?`<a href="${mOfferUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600;font-size:12px">${truncate(offerLabel,22)} ↗</a>`
+      :(mOfferName?`<span style="font-size:12px;color:var(--muted)">${truncate(mOfferName,22)}</span>`:'<span class="dash">—</span>');
     html+=`<tr class="master" data-i="${i}">
       <td class="l"><span class="caret">▶</span> ${m.date||''}</td>
-      <td class="l title-cell" colspan="3" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
+      <td class="l title-cell" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
+      <td class="l hide-sm">${sponsorCell}</td>
+      <td class="l hide-sm">${offerCell}</td>
       <td>${fmtInt(m.delivered)}</td>
       <td>${fmtPct(m.openAvg)}</td>
       <td class="${ctrCls}">${fmtPct(m.ctrAvg)}</td>
@@ -553,22 +572,11 @@ function renderTable(masters){
       const d=toNum(r[C.DELIVERED]);
       const ctr=pct(r[C.CTR]);
       const rawUnsubs=toNum(r[C.UNSUBS]||0);
-      // Per-row sponsor and offer
-      const sp=(r[C.SPONSOR]||'').trim();
-      const ofNm=(r[C.OFFER]||'').trim();
-      const ofUrl=(r[C.OFFER_LINK]||'').trim();
-      const offerHtml=ofUrl
-        ? `<a href="${ofUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600">${truncate(ofNm||sp||'Offer',20)} ↗</a>`
-        : (ofNm?`<span style="color:var(--muted)">${truncate(ofNm,20)}</span>`:'');
-      const metaHtml=(sp||offerHtml)
-        ? `<span style="color:var(--muted);font-size:11px;margin-left:6px">${sp?truncate(sp,16):''}${sp&&offerHtml?' · ':''}${offerHtml}</span>`
-        : '';
       html+=`<tr class="child" data-p="${i}">
         <td></td>
         <td class="child-title-cell" colspan="3">
-          <span class="listname-inline">${lst}</span>
+          <span class="listname-inline">${listFullName(lst)}</span>
           <span class="child-campaign-title">${truncate(childTitle,45)}</span>
-          ${metaHtml}
         </td>
         <td>${fmtInt(d)}</td>
         <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>

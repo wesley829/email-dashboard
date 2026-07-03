@@ -235,7 +235,8 @@
           <tr>
             <th class="l">Date</th>
             <th class="l">Campaign</th>
-            <th class="l hide-sm">Sponsor &amp; Offer</th>
+            <th class="l hide-sm">Sponsor</th>
+            <th class="l hide-sm">Offer</th>
             <th>Sent</th>
             <th>Open %</th>
             <th>CTR %</th>
@@ -245,7 +246,7 @@
           </tr>
         </thead>
         <tbody id="tbody">
-          <tr><td colspan="9" class="loading">Loading data…</td></tr>
+          <tr><td colspan="10" class="loading">Loading data…</td></tr>
         </tbody>
       </table>
     </div>
@@ -306,7 +307,8 @@ const EMBEDDED = {"cols":["date","key","campaign","sponsor","revenue","delivered
   ["2026-06-20","PND - #1 heart attack sign is not chest pain, cholesterol, or BP","#1 heart attack sign is not chest pain, cholesterol, or BP","PhysioTru Omega","",5001,45.77,31.03,67.8,1.72,"","https://bulletin.physiotru2.com/aff_c?offer_id=1&aff_id=5&url_id=8&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGphysomega062026"]
 ]};
 
-const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUBS:9,ECPM:10,AFFILIATE:11};
+// Sheet cols: A=Date, B=Key, C=Campaign, D=Sponsor, E=Revenue, F=Delivered, G=Open%, H=CTR%, I=CTOR%, J=Unsub, K=Offer(URL)
+const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUBS:9,OFFER:10};
 let RAW=[];
 
 // ── Parsers ──
@@ -439,10 +441,10 @@ function render(){
     const totalUnsubs=wUnsub; // raw count summed across all child rows
     const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
     const rps=revenue>0?revenue/g.rows.length:0;
-    // grab affiliate URL and sponsor from first row that has one
-    const affiliateRow=g.rows.find(r=>(r[C.AFFILIATE]||'').trim()!=='');
+    // grab offer URL (Col K) and sponsor (Col D) from first row that has one
+    const affiliateRow=g.rows.find(r=>(r[C.OFFER]||'').trim()!=='');
     const sponsorRow=g.rows.find(r=>(r[C.SPONSOR]||'').trim()!=='');
-    const affiliateUrl=(affiliateRow&&affiliateRow[C.AFFILIATE])||'';
+    const affiliateUrl=(affiliateRow&&affiliateRow[C.OFFER])||'';
     const sponsor=(sponsorRow&&sponsorRow[C.SPONSOR])||'';
     return{title:g.title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,ecpm,rps,affiliateUrl,sponsor,rows:g.rows};
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -575,24 +577,25 @@ function renderMonthly(masters){
 function truncate(s,n){return s.length>n?s.slice(0,n)+'…':s;}
 function renderTable(masters){
   const tb=document.getElementById('tbody');
-  if(!masters.length){tb.innerHTML='<tr><td colspan="9" class="loading">No data for this filter.</td></tr>';return;}
+  if(!masters.length){tb.innerHTML='<tr><td colspan="10" class="loading">No data for this filter.</td></tr>';return;}
   let html='';
   masters.forEach((m,i)=>{
     const ctrCls=m.ctrAvg>=1?'good':'';
     const rev=m.revenue>0?`<span class="rev">${fmtMoney(m.revenue)}</span>`:'<span class="dash">—</span>';
     const shortTitle=truncate(m.title,40);
-    // Build Sponsor + hyperlinked Offer cell for master row
-    const sponsorPart = m.sponsor ? `<span style="font-size:11px;color:var(--muted);font-weight:500">${truncate(m.sponsor,20)}</span>` : '';
-    const offerPart = m.affiliateUrl
-      ? `<a href="${m.affiliateUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:2px;color:var(--green);text-decoration:none;font-weight:600;font-size:12px">${truncate(m.sponsor||'View Offer',20)} <span style="font-size:10px">↗</span></a>`
-      : (m.sponsor ? `<span style="color:var(--muted);font-size:12px">${truncate(m.sponsor,20)}</span>` : '<span class="dash">—</span>');
-    const affiliateCell = m.affiliateUrl
-      ? `<div style="line-height:1.3">${offerPart}</div>`
-      : (m.sponsor ? `<span style="color:var(--muted);font-size:12px">${truncate(m.sponsor,20)}</span>` : '<span class="dash">—</span>');
+    // Sponsor cell (Col D) — plain text
+    const sponsorCell = m.sponsor
+      ? `<span style="font-size:12px;color:var(--fg)">${truncate(m.sponsor,22)}</span>`
+      : '<span class="dash">—</span>';
+    // Offer cell (Col K) — hyperlinked offer name
+    const offerCell = m.affiliateUrl
+      ? `<a href="${m.affiliateUrl}" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600;font-size:12px">${truncate(m.sponsor||'View Offer',22)} ↗</a>`
+      : '<span class="dash">—</span>';
     html+=`<tr class="master" data-i="${i}">
       <td class="l"><span class="caret">▶</span> ${m.date||''}</td>
       <td class="l title-cell" title="${m.title.replace(/"/g,'&quot;')}">${shortTitle}</td>
-      <td class="l affiliate-cell hide-sm">${affiliateCell}</td>
+      <td class="l hide-sm">${sponsorCell}</td>
+      <td class="l hide-sm">${offerCell}</td>
       <td>${fmtInt(m.delivered)}</td>
       <td>${fmtPct(m.openAvg)}</td>
       <td class="${ctrCls}">${fmtPct(m.ctrAvg)}</td>
@@ -610,6 +613,7 @@ function renderTable(masters){
       html+=`<tr class="child" data-p="${i}">
         <td></td>
         <td class="listname">${lst}</td>
+        <td class="hide-sm"></td>
         <td class="hide-sm"></td>
         <td>${fmtInt(d)}</td>
         <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>

@@ -128,6 +128,7 @@
   .child td.listname{padding-left:32px;text-align:left;color:var(--green);font-weight:600}
   .child{display:none}
   .child.show{display:table-row;animation:fadeIn .18s ease}
+  .child-offer td{border-top:1px solid var(--border)!important;background:#F3F6F3;padding:7px 10px 8px!important}
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
   .good{color:var(--good);font-weight:600}
   .bad{color:var(--bad);font-weight:600}
@@ -607,12 +608,30 @@ function renderTable(masters){
         <td class="hide-sm"></td>
         <td>${fmtInt(d)}</td>
         <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>
-        <td class="${ctr>=1?'good':''}">${fmtPct(ctr)||'—'}</td>
+        <td class="${ctr>=1?'good':''}">${ fmtPct(ctr)||'—'}</td>
         <td>${fmtPct(pct(r[C.CTOR]))||'—'}</td>
         <td>${rawUnsubs>0?fmtInt(rawUnsubs):'<span class="dash">—</span>'}</td>
         <td>${toNum(r[C.REVENUE])>0?fmtMoney(toNum(r[C.REVENUE])):'<span class="dash">—</span>'}</td>
       </tr>`;
     });
+    // Sponsor + Offer info row (shown at bottom of expanded group)
+    if(m.sponsor||m.affiliateUrl){
+      const offerLabel=m.sponsor||'View Offer';
+      const offerLink=m.affiliateUrl
+        ?`<a href="${m.affiliateUrl}" target="_blank" rel="noopener" style="color:var(--green);font-weight:600;text-decoration:none">${offerLabel} ↗</a>`
+        :`<span style="color:var(--muted)">${offerLabel}</span>`;
+      html+=`<tr class="child child-offer" data-p="${i}">
+        <td></td>
+        <td colspan="2" style="padding-left:12px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase">Sponsor</span>&nbsp;&nbsp;
+          <span style="font-size:13px;color:var(--fg)">${m.sponsor||'—'}</span>
+          &nbsp;&nbsp;<span style="color:var(--border)">|</span>&nbsp;&nbsp;
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase">Offer</span>&nbsp;&nbsp;
+          ${offerLink}
+        </td>
+        <td colspan="5"></td>
+      </tr>`;
+    }
   });
   tb.innerHTML=html;
   document.querySelectorAll('.master').forEach(row=>{

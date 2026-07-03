@@ -12,7 +12,8 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.5;padding:32px 28px 72px}
+    background:var(--bg);color:var(--ink);line-height:1.5;
+    padding:28px 20px 72px;-webkit-text-size-adjust:100%}
   .wrap{max-width:1200px;margin:0 auto}
 
   /* ── Header ── */
@@ -20,65 +21,81 @@
     gap:10px;margin-bottom:6px}
   h1{font-size:22px;font-weight:700;letter-spacing:-.3px}
   .sub{color:var(--muted);font-size:13px;margin-top:3px}
-  .updated{color:var(--muted);font-size:12px;padding-bottom:2px}
+  .updated{color:var(--muted);font-size:12px;padding-bottom:2px;white-space:nowrap}
 
   /* ── Controls ── */
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 24px;align-items:center}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;align-items:center}
   select,button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);
-    color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;outline:none}
+    color:var(--ink);border-radius:10px;padding:9px 13px;cursor:pointer;outline:none;
+    -webkit-appearance:none;appearance:none}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B7280'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
   select:hover,button:hover{border-color:#b0b3b0}
   button.refresh{background:var(--green);color:#fff;border-color:var(--green);font-weight:600;
-    padding:9px 18px;letter-spacing:.1px}
+    padding:9px 18px;letter-spacing:.1px;transition:background .15s}
   button.refresh:hover{background:#164a1a}
+  button.refresh:active{background:#0f3312;transform:scale(.98)}
 
   /* ── KPI Cards ── */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:28px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px 14px}
-  .kpi .label{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
-  .kpi .num{font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
-  .kpi .foot{font-size:11px;color:var(--muted);margin-top:6px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:26px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:16px 16px 12px;position:relative;overflow:hidden;
+    transition:box-shadow .2s,transform .2s}
+  .kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+  .kpi .label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:6px;
+    text-transform:uppercase;letter-spacing:.5px}
+  .kpi .num{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.1;
+    transition:color .3s}
+  .kpi .foot{font-size:11px;color:var(--muted);margin-top:5px}
   .kpi.bad .num{color:var(--bad)}
+  /* sparkline sits at bottom of card */
+  .kpi .spark{display:block;margin-top:10px;width:100%;height:32px}
 
   /* ── Section header (collapsible) ── */
   .section-hdr{display:flex;align-items:center;justify-content:space-between;
-    margin:0 0 14px;cursor:pointer;user-select:none;padding:4px 0}
-  .section-hdr:hover .section-title{color:var(--green)}
+    margin:0 0 12px;cursor:pointer;user-select:none;padding:4px 0;
+    transition:opacity .15s}
+  .section-hdr:hover{opacity:.8}
   .section-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
-  .section-caret{font-size:11px;color:var(--muted);transition:transform .2s;display:inline-block}
+  .section-caret{font-size:10px;color:var(--muted);transition:transform .22s;display:inline-block}
   .section-hdr.open .section-caret{transform:rotate(90deg)}
   .section-badge{font-size:11px;font-weight:500;color:var(--muted);background:var(--chip);
     border-radius:6px;padding:2px 8px}
-  .section-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;
+  .section-body{overflow:hidden;
+    transition:max-height .38s cubic-bezier(.4,0,.2,1),opacity .28s ease;
     max-height:0;opacity:0;pointer-events:none}
-  .section-body.open{max-height:2000px;opacity:1;pointer-events:auto}
-  .section-divider{border:none;border-top:1px solid var(--line);margin:24px 0 20px}
+  .section-body.open{max-height:2400px;opacity:1;pointer-events:auto}
+  .section-divider{border:none;border-top:1px solid var(--line);margin:22px 0 18px}
 
   /* ── Monthly Revenue ── */
-  .rev-summary{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;
+  .rev-summary{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline;
     background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:20px 24px;margin-bottom:14px}
-  .rev-summary .rs-item{display:flex;flex-direction:column;gap:3px}
-  .rev-summary .rs-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:500}
-  .rev-summary .rs-val{font-size:20px;font-weight:700;letter-spacing:-.4px}
+    padding:18px 22px;margin-bottom:12px}
+  .rev-summary .rs-item{display:flex;flex-direction:column;gap:3px;min-width:80px}
+  .rev-summary .rs-label{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.4px;font-weight:500}
+  .rev-summary .rs-val{font-size:19px;font-weight:700;letter-spacing:-.4px}
   .rev-summary .rs-val.green{color:var(--green)}
-  .rev-summary .rs-divider{width:1px;background:var(--line);align-self:stretch;margin:0 4px}
+  .rev-summary .rs-divider{width:1px;background:var(--line);align-self:stretch;margin:0 2px}
 
   .monthly-table-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;
     overflow:hidden;margin-bottom:6px}
   .monthly-table{width:100%;border-collapse:collapse;font-size:13px}
   .monthly-table thead th{background:var(--green);color:#fff;font-weight:600;
-    padding:10px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+    padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
   .monthly-table thead th.r{text-align:right}
-  .monthly-table tbody td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:middle}
+  .monthly-table tbody td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:middle}
   .monthly-table tbody td.r{text-align:right}
+  .monthly-table tbody tr{transition:background .12s}
   .monthly-table tbody tr:hover{background:var(--bg)}
   .mo-name{font-weight:600;font-size:14px}
   .mo-badge-cur{display:inline-block;background:var(--green-soft);color:var(--green);
     font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;
     text-transform:uppercase;letter-spacing:.3px;vertical-align:middle}
-  .mo-bar-cell{width:200px}
-  .mo-bar-track{background:var(--line);border-radius:4px;height:8px;overflow:hidden}
-  .mo-bar-fill{height:100%;background:var(--green);border-radius:4px;transition:width .5s}
+  .mo-bar-cell{width:180px}
+  .mo-bar-track{background:var(--line);border-radius:4px;height:7px;overflow:hidden}
+  .mo-bar-fill{height:100%;background:var(--green);border-radius:4px;
+    transition:width .6s cubic-bezier(.4,0,.2,1)}
   .mo-bar-fill.zero{background:#E0E2E0}
   .mo-rev-val{font-weight:700;color:var(--ink)}
   .mo-rev-val.zero{color:#C9CCC9;font-weight:400}
@@ -86,38 +103,59 @@
   .mo-ecpm.zero{color:var(--muted);font-weight:400}
 
   /* ── Send Log ── */
-  .sectionlabel{font-size:15px;font-weight:700;margin:0 0 14px}
-  .tablecard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .sectionlabel{font-size:15px;font-weight:700;margin:0 0 12px}
+  .tablecard{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;-webkit-overflow-scrolling:touch}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
   thead th{background:var(--green);color:#fff;font-weight:600;text-align:center;
-    padding:12px 12px;font-size:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+    padding:11px 10px;font-size:11px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
   thead th.l{text-align:left}
-  tbody td{padding:12px 12px;text-align:center;border-top:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:11px 10px;text-align:center;border-top:1px solid var(--line);white-space:nowrap}
   tbody td.l{text-align:left}
   .master{cursor:pointer}
+  .master td{transition:background .12s}
   .master:hover td{background:var(--green-soft)}
   .master td{font-weight:600}
-  .caret{display:inline-block;width:14px;color:var(--muted);transition:transform .15s;font-size:10px}
+  .caret{display:inline-block;width:13px;color:var(--muted);transition:transform .18s;font-size:10px}
   .master.open .caret{transform:rotate(90deg)}
-  .title-cell{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .child td{background:#FAFBFA;font-weight:400;color:#374151;font-size:12.5px}
-  .child td.listname{padding-left:36px;text-align:left;color:var(--green);font-weight:600}
+  .title-cell{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .child td{background:#FAFBFA;font-weight:400;color:#374151;font-size:12px}
+  .child td.listname{padding-left:32px;text-align:left;color:var(--green);font-weight:600}
   .child{display:none}
-  .child.show{display:table-row}
+  .child.show{display:table-row;animation:fadeIn .18s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
   .good{color:var(--good);font-weight:600}
   .bad{color:var(--bad);font-weight:600}
   .rev{font-weight:700}
   .dash{color:#C4C7C4}
-  .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.7}
+  .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7}
   .loading{padding:44px;text-align:center;color:var(--muted);font-size:14px}
-  .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;font-size:11px;color:#374151}
+  .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;
+    font-size:11px;color:#374151}
 
-  @media(max-width:640px){
-    .hide-sm{display:none}
-    h1{font-size:19px}
+  /* ── Mobile ── */
+  @media(max-width:600px){
+    body{padding:16px 14px 60px}
+    h1{font-size:18px}
+    .kpis{grid-template-columns:repeat(2,1fr);gap:8px}
     .kpi .num{font-size:20px}
-    body{padding:20px 16px 60px}
-    .mo-bar-cell{display:none}
+    .kpi .spark{height:24px}
+    .controls{gap:6px}
+    select,button{font-size:12px;padding:8px 10px}
+    select{padding-right:24px}
+    .rev-summary{gap:14px;padding:14px 16px}
+    .rev-summary .rs-divider{display:none}
+    .rev-summary .rs-val{font-size:17px}
+    .hide-sm{display:none}
+    .title-cell{max-width:160px}
+    table{font-size:12px;min-width:480px}
+    thead th,tbody td{padding:9px 8px}
+  }
+  @media(max-width:380px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .kpi{padding:12px 12px 10px}
+    .kpi .num{font-size:18px}
   }
 </style>
 </head>
@@ -146,7 +184,7 @@
       <option value="90">Last 90 days</option>
       <option value="9999" selected>All time</option>
     </select>
-    <button class="refresh" id="refreshBtn">↻ Refresh data</button>
+    <button class="refresh" id="refreshBtn">↻ Refresh</button>
   </div>
 
   <!-- KPI Scorecards -->
@@ -163,19 +201,21 @@
   <div class="section-body" id="revBody">
     <div class="rev-summary" id="revSummary"></div>
     <div class="monthly-table-wrap">
-      <table class="monthly-table">
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th class="r">Revenue</th>
-            <th class="r">ECPM</th>
-            <th class="r">Sends</th>
-            <th class="r hide-sm">Paid Sends</th>
-            <th class="mo-bar-cell hide-sm">vs. Best Month</th>
-          </tr>
-        </thead>
-        <tbody id="revTbody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="monthly-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th class="r">Revenue</th>
+              <th class="r">ECPM</th>
+              <th class="r">Sends</th>
+              <th class="r hide-sm">Paid</th>
+              <th class="mo-bar-cell hide-sm">vs. Best</th>
+            </tr>
+          </thead>
+          <tbody id="revTbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -184,72 +224,65 @@
   <!-- Send Log -->
   <div class="sectionlabel">Send log</div>
   <div class="tablecard">
-    <table>
-      <thead>
-        <tr>
-          <th class="l">Date</th>
-          <th class="l">Campaign</th>
-          <th>Sent</th>
-          <th>Open %</th>
-          <th>CTR %</th>
-          <th>CTOR %</th>
-          <th class="hide-sm">Unsub %</th>
-          <th>Rev</th>
-          <th>ECPM</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        <tr><td colspan="9" class="loading">Loading data…</td></tr>
-      </tbody>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="l">Date</th>
+            <th class="l">Campaign</th>
+            <th>Sent</th>
+            <th>Open %</th>
+            <th>CTR %</th>
+            <th>CTOR %</th>
+            <th class="hide-sm">Unsub %</th>
+            <th>Rev</th>
+            <th>ECPM</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="9" class="loading">Loading data…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="note">
-    Green click values = above-average engagement &nbsp;·&nbsp; Red = above unsub threshold &nbsp;·&nbsp; Dashes = revenue not yet logged.<br>
-    Click any campaign row to expand individual list sends. Click <strong>Monthly Revenue</strong> above to expand the revenue breakdown. Data pulls live from your Google Sheet — hit Refresh after each sync.
+    Green values = above-average engagement &nbsp;·&nbsp; Red = above unsub threshold &nbsp;·&nbsp; Dashes = revenue not yet logged.<br>
+    Tap any campaign row to expand list-level detail. Tap <strong>Monthly Revenue</strong> to expand the revenue breakdown.
   </div>
 
 </div>
 
 <script>
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=932892236&single=true&output=csv";
-const EMBEDDED = {"cols": ["date", "key", "campaign", "sponsor", "revenue", "delivered", "open", "ctr", "ctor", "unsub"], "rows": [["2026-07-01", "AWS - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 8312, 33.97, 9.44, 27.8, 0.17], ["2026-07-01", "PND - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 10861, 47.22, 25.78, 54.59, 0.12], ["2026-07-01", "AHS - Jeff Free book - Peace wasn't where I expected to find it.", "Jeff Free book - Peace wasn't where I expected to find it.", "", "", 10306, 46.62, 25.38, 54.44, 0.77], ["2026-07-02", "G&G - Peace wasn't where I expected to find it.", "Peace wasn't where I expected to find it.", "", "", 82476, 23.61, 0.14, 0.59, 0.11], ["2026-06-30", "AHS - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 7952, 57.86, 3.46, 5.98, 0.33], ["2026-06-30", "PND - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 8826, 57.01, 2.88, 5.05, 0.25], ["2026-06-30", "AWS - Jeff Free book - I slept with a loaded pistol under my head", "Jeff Free book - I slept with a loaded pistol under my head", "", "", 6717, 55.23, 1.53, 2.78, 0.3], ["2026-06-30", "G&G - I slept with a loaded pistol under my head.", "I slept with a loaded pistol under my head.", "", "", 82608, 25.09, 0.18, 0.73, 0.13], ["2026-06-29", "AWS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 8000, 48.7, 10.4, 21.36, 0.14], ["2026-06-29", "PND - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 9809, 54.68, 20.35, 37.21, 0.51], ["2026-06-29", "AHS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "iRollie - \"Shower Trick\" cuts heart attack risk by 95%", "", "", 8909, 59.51, 23.75, 39.91, 0.09], ["2026-06-29", "G&G - \"Shower Trick\" cuts heart attack risk by 95%", "\"Shower Trick\" cuts heart attack risk by 95%", "", "", 82578, 22.6, 0.92, 4.07, 0.09], ["2026-06-28", "AWS - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 5496, 53.6, 1.75, 3.26, 0.42], ["2026-06-28", "PND - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 7674, 60.1, 3.0, 4.99, 0.65], ["2026-06-28", "AHS - I thought I had something to prove... (Free Book)", "I thought I had something to prove... (Free Book)", "", "", 6557, 58.46, 3.08, 5.27, 0.47], ["2026-06-28", "G&G - I thought I had something to prove...", "I thought I had something to prove...", "", "", 82804, 40.39, 0.3, 0.74, 0.24], ["2026-06-27", "AHS - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 8108, 56.33, 19.84, 35.23, 0.12], ["2026-06-27", "PND - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 8673, 55.79, 19.79, 35.46, 0.18], ["2026-06-27", "AWS - iRollie - This hot drink DOUBLED stem cells in 30 days...", "iRollie - This hot drink DOUBLED stem cells in 30 days...", "", "", 6141, 49.89, 12.95, 25.95, 0.11], ["2026-06-27", "G&G - This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)", "This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)", "", "", 82698, 29.24, 0.55, 1.87, 0.11], ["2026-06-26", "AWS - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 4663, 60.03, 1.78, 2.97, 0.21], ["2026-06-26", "PND - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 7563, 57.38, 2.82, 4.91, 0.25], ["2026-06-26", "AHS - Freeze Dry - Why Your Emergency Food Storage...", "Freeze Dry - Why Your Emergency Food Storage...", "", "", 6344, 60.25, 2.55, 4.24, 0.17], ["2026-06-26", "G&G - Why Your Emergency Food Storage Could Be Slowly Killing Your Family", "Why Your Emergency Food Storage Could Be Slowly Killing Your Family", "", "", 81460, 37.79, 0.15, 0.41, 0.14], ["2026-06-25", "AHS - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 6542, 60.68, 3.39, 5.59, 0.31], ["2026-06-25", "PND - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 8352, 56.63, 19.25, 34.0, 0.12], ["2026-06-25", "AWS - Freeze Dry - The #1 food on Trump's Mar-a-Lago", "Freeze Dry - The #1 food on Trump's Mar-a-Lago", "", "", 4912, 58.18, 15.76, 27.08, 0.24], ["2026-06-25", "G&G - The #1 food on Trump's Mar-a-Lago bunker menu", "The #1 food on Trump's Mar-a-Lago bunker menu", "", "", 141067, 22.85, 0.2, 0.86, 0.12], ["2026-06-24", "AWS - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 4533, 26.69, 1.9, 7.11, 0.13], ["2026-06-24", "PND - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 4663, 43.38, 4.98, 11.47, 0.13], ["2026-06-24", "AHS - iRollie - 5 Cups Cocoa daily", "iRollie - 5 Cups Cocoa daily", "", "", 5141, 24.39, 3.27, 13.4, 0.04], ["2026-06-24", "G&G - Is their longevity secret drinking chocolate?", "Is their longevity secret drinking chocolate?", "", "", 4, 25.0, 0.0, 0.0, 0.0], ["2026-06-23", "AHS - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 5732, 78.73, 27.08, 34.39, 0.37], ["2026-06-23", "PND - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 6081, 70.89, 25.28, 35.65, 0.18], ["2026-06-23", "AWS - Elon's bunker food isn't from amazon", "Elon's bunker food isn't from amazon", "", "", 3967, 73.93, 20.52, 27.75, 0.25], ["2026-06-23", "G&G - Elon's bunker food isn't from Amazon", "Elon's bunker food isn't from Amazon", "", "", 170313, 19.52, 0.28, 1.43, 0.1], ["2026-06-20", "AWS - #1 heart attack sign is not chest pain, cholesterol, or BP", "#1 heart attack sign is not chest pain, cholesterol, or BP", "", "", 3342, 41.62, 26.06, 62.62, 0.21], ["2026-06-20", "PND - #1 heart attack sign is not chest pain, cholesterol, or BP", "#1 heart attack sign is not chest pain, cholesterol, or BP", "", "", 5001, 45.77, 31.03, 67.8, 1.72], ["2026-06-20", "G&G - Heart Attack Test: touch your feet like THIS (for 7 sec)", "Heart Attack Test: touch your feet like THIS (for 7 sec)", "iRollie/PhysioTru", 400, 172271, 21.18, 1.32, 6.23, 0.13]]};
+const EMBEDDED = {"cols":["date","key","campaign","sponsor","revenue","delivered","open","ctr","ctor","unsub"],"rows":[["2026-07-01","AWS - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","","",8312,33.97,9.44,27.8,0.17],["2026-07-01","PND - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","","",10861,47.22,25.78,54.59,0.12],["2026-07-01","AHS - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","","",10306,46.62,25.38,54.44,0.77],["2026-07-02","G&G - Peace wasn't where I expected to find it.","Peace wasn't where I expected to find it.","","",82476,23.61,0.14,0.59,0.11],["2026-06-30","AHS - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","","",7952,57.86,3.46,5.98,0.33],["2026-06-30","PND - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","","",8826,57.01,2.88,5.05,0.25],["2026-06-30","AWS - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","","",6717,55.23,1.53,2.78,0.3],["2026-06-30","G&G - I slept with a loaded pistol under my head.","I slept with a loaded pistol under my head.","","",82608,25.09,0.18,0.73,0.13],["2026-06-29","AWS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","","",8000,48.7,10.4,21.36,0.14],["2026-06-29","PND - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","","",9809,54.68,20.35,37.21,0.51],["2026-06-29","AHS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","","",8909,59.51,23.75,39.91,0.09],["2026-06-29","G&G - \"Shower Trick\" cuts heart attack risk by 95%","\"Shower Trick\" cuts heart attack risk by 95%","","",82578,22.6,0.92,4.07,0.09],["2026-06-28","AWS - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","","",5496,53.6,1.75,3.26,0.42],["2026-06-28","PND - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","","",7674,60.1,3.0,4.99,0.65],["2026-06-28","AHS - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","","",6557,58.46,3.08,5.27,0.47],["2026-06-28","G&G - I thought I had something to prove...","I thought I had something to prove...","","",82804,40.39,0.3,0.74,0.24],["2026-06-27","AHS - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","","",8108,56.33,19.84,35.23,0.12],["2026-06-27","PND - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","","",8673,55.79,19.79,35.46,0.18],["2026-06-27","AWS - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","","",6141,49.89,12.95,25.95,0.11],["2026-06-27","G&G - This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)","This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)","","",82698,29.24,0.55,1.87,0.11],["2026-06-26","AWS - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","","",4663,60.03,1.78,2.97,0.21],["2026-06-26","PND - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","","",7563,57.38,2.82,4.91,0.25],["2026-06-26","AHS - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","","",6344,60.25,2.55,4.24,0.17],["2026-06-26","G&G - Why Your Emergency Food Storage Could Be Slowly Killing Your Family","Why Your Emergency Food Storage Could Be Slowly Killing Your Family","","",81460,37.79,0.15,0.41,0.14],["2026-06-25","AHS - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","","",6542,60.68,3.39,5.59,0.31],["2026-06-25","PND - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","","",8352,56.63,19.25,34.0,0.12],["2026-06-25","AWS - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","","",4912,58.18,15.76,27.08,0.24],["2026-06-25","G&G - The #1 food on Trump's Mar-a-Lago bunker menu","The #1 food on Trump's Mar-a-Lago bunker menu","","",141067,22.85,0.2,0.86,0.12],["2026-06-24","AWS - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","","",4533,26.69,1.9,7.11,0.13],["2026-06-24","PND - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","","",4663,43.38,4.98,11.47,0.13],["2026-06-24","AHS - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","","",5141,24.39,3.27,13.4,0.04],["2026-06-24","G&G - Is their longevity secret drinking chocolate?","Is their longevity secret drinking chocolate?","","",4,25.0,0.0,0.0,0.0],["2026-06-23","AHS - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","","",5732,78.73,27.08,34.39,0.37],["2026-06-23","PND - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","","",6081,70.89,25.28,35.65,0.18],["2026-06-23","AWS - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","","",3967,73.93,20.52,27.75,0.25],["2026-06-23","G&G - Elon's bunker food isn't from Amazon","Elon's bunker food isn't from Amazon","","",170313,19.52,0.28,1.43,0.1],["2026-06-20","AWS - #1 heart attack sign is not chest pain, cholesterol, or BP","#1 heart attack sign is not chest pain, cholesterol, or BP","","",3342,41.62,26.06,62.62,0.21],["2026-06-20","PND - #1 heart attack sign is not chest pain, cholesterol, or BP","#1 heart attack sign is not chest pain, cholesterol, or BP","","",5001,45.77,31.03,67.8,1.72],["2026-06-20","G&G - Heart Attack Test: touch your feet like THIS (for 7 sec)","Heart Attack Test: touch your feet like THIS (for 7 sec)","iRollie/PhysioTru",400,172271,21.18,1.32,6.23,0.13]]};
 
-const C = {DATE:0, KEY:1, CAMPAIGN:2, SPONSOR:3, REVENUE:4, DELIVERED:5,
-           OPEN:6, CTR:7, CTOR:8, UNSUB:9, ECPM:10};
+const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUB:9};
+let RAW=[];
 
-let RAW = [];
-
+// ── Parsers ──
 function parseCSV(text){
-  const rows=[]; let row=[], cur="", q=false;
+  const rows=[];let row=[],cur="",q=false;
   for(let i=0;i<text.length;i++){
     const ch=text[i];
-    if(q){
-      if(ch=='"'){ if(text[i+1]=='"'){cur+='"';i++;} else q=false; }
-      else cur+=ch;
-    }else{
-      if(ch=='"')q=true;
-      else if(ch==','){row.push(cur);cur="";}
+    if(q){if(ch=='"'){if(text[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=ch;}
+    else{if(ch=='"')q=true;else if(ch==','){row.push(cur);cur="";}
       else if(ch=='\n'){row.push(cur);rows.push(row);row=[];cur="";}
-      else if(ch=='\r'){}
-      else cur+=ch;
-    }
+      else if(ch!='\r')cur+=ch;}
   }
   if(cur.length||row.length){row.push(cur);rows.push(row);}
   return rows;
 }
-
-function toNum(v){ if(v==null)return 0; const n=parseFloat(String(v).replace(/[$,%\s]/g,'')); return isNaN(n)?0:n; }
+function toNum(v){if(v==null)return 0;const n=parseFloat(String(v).replace(/[$,%\s]/g,''));return isNaN(n)?0:n;}
 function pct(v){
   if(v==null||v==='')return null;
   let s=String(v).trim();
-  if(s.endsWith('%')) return toNum(s);
-  const n=toNum(s);
-  return n<=1 ? n*100 : n;
+  if(s.endsWith('%'))return toNum(s);
+  const n=toNum(s);return n<=1?n*100:n;
 }
 function listOf(key){
   const m=String(key).match(/^\s*(G&G|AWS|AHS|PND)\b/i);
-  return m?m[1].toUpperCase().replace('G&G','G&G'):"OTHER";
+  return m?m[1].toUpperCase():"OTHER";
 }
 function cleanTitle(key,campaign){
   let t=(campaign&&campaign.trim())?campaign:String(key);
@@ -263,37 +296,63 @@ function corePhrase(key,campaign){
   t=t.replace(/[^a-z0-9]/g,'');
   return t.slice(0,24);
 }
-function weekBucket(date){
-  const d=new Date(date); if(isNaN(d))return '';
-  return Math.floor(d.getTime()/(3*864e5));
-}
+function weekBucket(date){const d=new Date(date);if(isNaN(d))return '';return Math.floor(d.getTime()/(3*864e5));}
 function baseKey(key,campaign,date){
-  const phrase=corePhrase(key,campaign);
-  if(phrase && phrase.length>=6) return phrase+'|'+weekBucket(date);
-  return (date||'').slice(0,10);
+  const p=corePhrase(key,campaign);
+  return(p&&p.length>=6)?p+'|'+weekBucket(date):(date||'').slice(0,10);
 }
-function fmtInt(n){ return Math.round(n).toLocaleString(); }
-function fmtPct(n){ return n==null?null:(n).toFixed(2)+'%'; }
-function fmtMoney(n){ return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); }
-function fmtM(n){ return n>=1e6?(n/1e6).toFixed(2)+'M':(n>=1e3?(n/1e3).toFixed(0)+'K':fmtInt(n)); }
+function fmtInt(n){return Math.round(n).toLocaleString();}
+function fmtPct(n){return n==null?null:n.toFixed(2)+'%';}
+function fmtMoney(n){return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});}
+function fmtM(n){return n>=1e6?(n/1e6).toFixed(2)+'M':(n>=1e3?(n/1e3).toFixed(0)+'K':fmtInt(n));}
 
+// ── Count-up animation ──
+function countUp(el,target,formatter,duration){
+  const start=performance.now();
+  function step(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3); // ease-out cubic
+    const val=target*ease;
+    el.textContent=formatter(val);
+    if(p<1)requestAnimationFrame(step);
+    else el.textContent=formatter(target);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Sparkline SVG ──
+function sparkline(values,w,h,color){
+  if(!values||values.length<2)return '';
+  const min=Math.min(...values),max=Math.max(...values);
+  const range=max-min||1;
+  const pts=values.map((v,i)=>{
+    const x=(i/(values.length-1))*w;
+    const y=h-((v-min)/range)*(h-4)-2;
+    return x+','+y;
+  });
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="overflow:visible">
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.6"/>
+  </svg>`;
+}
+
+// ── Data load ──
 async function loadData(){
   const tbody=document.getElementById('tbody');
-  if(SHEET_CSV_URL && SHEET_CSV_URL.trim()!==''){
+  if(SHEET_CSV_URL&&SHEET_CSV_URL.trim()!==''){
     tbody.innerHTML='<tr><td colspan="9" class="loading">Loading data…</td></tr>';
     try{
       const res=await fetch(SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
       const txt=await res.text();
       const rows=parseCSV(txt);
-      RAW=rows.slice(1).filter(r=>r.length>=11&&(r[C.KEY]||'').trim()!=='');
-      document.getElementById('updated').textContent='Updated '+new Date().toLocaleString()+' (live)';
-      render(); return;
+      RAW=rows.slice(1).filter(r=>r.length>=9&&(r[C.KEY]||'').trim()!=='');
+      document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString()+' (live)';
+      render();return;
     }catch(e){}
   }
   RAW=EMBEDDED.rows.map(r=>{
-    const o=[]; o[C.DATE]=r[0]; o[C.KEY]=r[1]; o[C.CAMPAIGN]=r[2]; o[C.SPONSOR]=r[3];
-    o[C.REVENUE]=r[4]; o[C.DELIVERED]=r[5]; o[C.OPEN]=r[6]; o[C.CTR]=r[7];
-    o[C.CTOR]=r[8]; o[C.UNSUB]=r[9]; o[C.ECPM]=''; return o;
+    const o=[];o[C.DATE]=r[0];o[C.KEY]=r[1];o[C.CAMPAIGN]=r[2];o[C.SPONSOR]=r[3];
+    o[C.REVENUE]=r[4];o[C.DELIVERED]=r[5];o[C.OPEN]=r[6];o[C.CTR]=r[7];
+    o[C.CTOR]=r[8];o[C.UNSUB]=r[9];return o;
   });
   document.getElementById('updated').textContent='Snapshot · Jul 3, 2026';
   render();
@@ -301,7 +360,7 @@ async function loadData(){
 
 function withinRange(dstr,days){
   if(days>=9999)return true;
-  const d=new Date(dstr); if(isNaN(d))return true;
+  const d=new Date(dstr);if(isNaN(d))return true;
   return d.getTime()>=Date.now()-days*864e5;
 }
 
@@ -309,27 +368,28 @@ function render(){
   const listF=document.getElementById('listFilter').value;
   const rangeF=parseInt(document.getElementById('rangeFilter').value,10);
   let rows=RAW.filter(r=>withinRange(r[C.DATE],rangeF));
-  if(listF!=='ALL') rows=rows.filter(r=>listOf(r[C.KEY])===listF);
+  if(listF!=='ALL')rows=rows.filter(r=>listOf(r[C.KEY])===listF);
 
   const groups={};
   rows.forEach(r=>{
     const bk=baseKey(r[C.KEY],r[C.CAMPAIGN],r[C.DATE]);
-    if(!groups[bk]) groups[bk]={title:cleanTitle(r[C.KEY],r[C.CAMPAIGN]),date:r[C.DATE],rows:[]};
+    if(!groups[bk])groups[bk]={title:cleanTitle(r[C.KEY],r[C.CAMPAIGN]),date:r[C.DATE],rows:[]};
     groups[bk].rows.push(r);
-    if(new Date(r[C.DATE])>new Date(groups[bk].date)) groups[bk].date=r[C.DATE];
+    if(new Date(r[C.DATE])>new Date(groups[bk].date))groups[bk].date=r[C.DATE];
   });
 
   const masters=Object.values(groups).map(g=>{
     let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0;
     g.rows.forEach(r=>{
-      const d=toNum(r[C.DELIVERED]); delivered+=d; revenue+=toNum(r[C.REVENUE]);
-      wOpen+=(pct(r[C.OPEN])||0)*d; wCtr+=(pct(r[C.CTR])||0)*d;
-      wCtor+=(pct(r[C.CTOR])||0)*d; wUnsub+=(pct(r[C.UNSUB])||0)*d;
+      const d=toNum(r[C.DELIVERED]);delivered+=d;revenue+=toNum(r[C.REVENUE]);
+      wOpen+=(pct(r[C.OPEN])||0)*d;wCtr+=(pct(r[C.CTR])||0)*d;
+      wCtor+=(pct(r[C.CTOR])||0)*d;wUnsub+=(pct(r[C.UNSUB])||0)*d;
     });
-    const openAvg=delivered?wOpen/delivered:0, ctrAvg=delivered?wCtr/delivered:0,
-          ctorAvg=delivered?wCtor/delivered:0, unsubAvg=delivered?wUnsub/delivered:0;
+    const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
+          ctorAvg=delivered?wCtor/delivered:0,unsubAvg=delivered?wUnsub/delivered:0;
     const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
-    return {title:g.title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,unsubAvg,ecpm,rows:g.rows};
+    const rps=revenue>0?revenue/g.rows.length:0; // revenue per send
+    return{title:g.title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,unsubAvg,ecpm,rps,rows:g.rows};
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
@@ -340,29 +400,64 @@ function render(){
 function renderKPIs(masters){
   let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0,paid=0;
   masters.forEach(m=>{
-    delivered+=m.delivered; revenue+=m.revenue; if(m.revenue>0)paid++;
-    wOpen+=m.openAvg*m.delivered; wCtr+=m.ctrAvg*m.delivered;
-    wCtor+=m.ctorAvg*m.delivered; wUnsub+=m.unsubAvg*m.delivered;
+    delivered+=m.delivered;revenue+=m.revenue;if(m.revenue>0)paid++;
+    wOpen+=m.openAvg*m.delivered;wCtr+=m.ctrAvg*m.delivered;
+    wCtor+=m.ctorAvg*m.delivered;wUnsub+=m.unsubAvg*m.delivered;
   });
-  const openAvg=delivered?wOpen/delivered:0, ctrAvg=delivered?wCtr/delivered:0,
-        ctorAvg=delivered?wCtor/delivered:0, unsubAvg=delivered?wUnsub/delivered:0;
+  const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
+        ctorAvg=delivered?wCtor/delivered:0,unsubAvg=delivered?wUnsub/delivered:0;
   const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
-  const k=[
-    {label:'Revenue',num:fmtMoney(revenue),foot:paid+' sends paid'},
-    {label:'ECPM avg',num:fmtMoney(ecpm),foot:'per 1k delivered'},
-    {label:'Delivered',num:fmtM(delivered),foot:masters.length+' campaigns'},
-    {label:'CTR avg',num:fmtPct(ctrAvg),foot:'true engagement'},
-    {label:'Open avg',num:fmtPct(openAvg),foot:'directional'},
-    {label:'CTOR avg',num:fmtPct(ctorAvg),foot:'click-to-open'},
-    {label:'Unsub avg',num:fmtPct(unsubAvg),foot:'',bad:unsubAvg>0.3},
+  const rps=paid>0?revenue/paid:0;
+
+  // Build sparkline data from last 14 masters (sorted oldest→newest for trend)
+  const recent=[...masters].reverse().slice(-14);
+  const openSpark=recent.map(m=>m.openAvg);
+  const ctrSpark=recent.map(m=>m.ctrAvg);
+  const ctorSpark=recent.map(m=>m.ctorAvg);
+  const unsubSpark=recent.map(m=>m.unsubAvg);
+
+  const kpis=[
+    {label:'Revenue',val:revenue,fmt:v=>fmtMoney(v),foot:paid+' paid sends',spark:null,id:'kpi-rev'},
+    {label:'ECPM avg',val:ecpm,fmt:v=>fmtMoney(v),foot:'per 1k delivered',spark:null,id:'kpi-ecpm'},
+    {label:'Rev / Send',val:rps,fmt:v=>fmtMoney(v),foot:'avg per paid send',spark:null,id:'kpi-rps'},
+    {label:'Delivered',val:delivered,fmt:v=>fmtM(v),foot:masters.length+' campaigns',spark:null,id:'kpi-del'},
+    {label:'CTR avg',val:ctrAvg,fmt:v=>fmtPct(v),foot:'true engagement',spark:ctrSpark,id:'kpi-ctr'},
+    {label:'Open avg',val:openAvg,fmt:v=>fmtPct(v),foot:'directional',spark:openSpark,id:'kpi-open'},
+    {label:'CTOR avg',val:ctorAvg,fmt:v=>fmtPct(v),foot:'click-to-open',spark:ctorSpark,id:'kpi-ctor'},
+    {label:'Unsub avg',val:unsubAvg,fmt:v=>fmtPct(v),foot:'',spark:unsubSpark,bad:unsubAvg>0.3,id:'kpi-unsub'},
   ];
-  document.getElementById('kpis').innerHTML=k.map(x=>
-    `<div class="kpi${x.bad?' bad':''}"><div class="label">${x.label}</div>
-     <div class="num">${x.num||'—'}</div><div class="foot">${x.foot||''}</div></div>`).join('');
+
+  document.getElementById('kpis').innerHTML=kpis.map(k=>
+    `<div class="kpi${k.bad?' bad':''}" id="${k.id}">
+      <div class="label">${k.label}</div>
+      <div class="num" id="${k.id}-num">—</div>
+      <div class="foot">${k.foot||''}</div>
+      ${k.spark&&k.spark.length>1?`<svg class="spark" id="${k.id}-spark" viewBox="0 0 100 32" preserveAspectRatio="none"></svg>`:''}
+    </div>`).join('');
+
+  // Animate count-up
+  kpis.forEach(k=>{
+    const el=document.getElementById(k.id+'-num');
+    if(!el)return;
+    countUp(el,k.val,k.fmt,700);
+    // Draw sparkline
+    if(k.spark&&k.spark.length>1){
+      const svg=document.getElementById(k.id+'-spark');
+      if(svg){
+        const color=k.bad?'#C62828':'#1B5E20';
+        const min=Math.min(...k.spark),max=Math.max(...k.spark),range=max-min||1;
+        const pts=k.spark.map((v,i)=>{
+          const x=(i/(k.spark.length-1))*100;
+          const y=32-((v-min)/range)*28-2;
+          return x+','+y;
+        });
+        svg.innerHTML=`<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>`;
+      }
+    }
+  });
 }
 
 function renderMonthly(masters){
-  // Build month buckets — only from actual data, no fabrication
   const months={};
   masters.forEach(m=>{
     const mo=(m.date||'').slice(0,7);
@@ -380,8 +475,7 @@ function renderMonthly(masters){
   if(!sorted.length){
     document.getElementById('revSummary').innerHTML='<span style="color:var(--muted);font-size:13px">No revenue data yet — add amounts in Column E of the Google Sheet.</span>';
     document.getElementById('revTbody').innerHTML='<tr><td colspan="6" class="loading" style="padding:24px">No revenue logged yet.</td></tr>';
-    badge.textContent=sorted.length+' months';
-    return;
+    badge.textContent='0 months';return;
   }
 
   const nowMo=new Date().toISOString().slice(0,7);
@@ -391,7 +485,6 @@ function renderMonthly(masters){
   const paidMonths=sorted.filter(k=>months[k].revenue>0).length;
   const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
 
-  // Summary bar
   document.getElementById('revSummary').innerHTML=`
     <div class="rs-item"><div class="rs-label">Total Revenue</div><div class="rs-val green">${totalRev>0?fmtMoney(totalRev):'—'}</div></div>
     <div class="rs-divider"></div>
@@ -399,11 +492,10 @@ function renderMonthly(masters){
     <div class="rs-divider"></div>
     <div class="rs-item"><div class="rs-label">Months Tracked</div><div class="rs-val">${sorted.length}</div></div>
     <div class="rs-divider"></div>
-    <div class="rs-item"><div class="rs-label">Months with Revenue</div><div class="rs-val">${paidMonths}</div></div>`;
+    <div class="rs-item"><div class="rs-label">Months w/ Revenue</div><div class="rs-val">${paidMonths}</div></div>`;
 
   badge.textContent=sorted.length+' months';
 
-  // Table rows
   let html='';
   sorted.forEach(mo=>{
     const d=months[mo];
@@ -427,7 +519,7 @@ function renderMonthly(masters){
 
 function renderTable(masters){
   const tb=document.getElementById('tbody');
-  if(!masters.length){ tb.innerHTML='<tr><td colspan="9" class="loading">No data for this filter.</td></tr>'; return; }
+  if(!masters.length){tb.innerHTML='<tr><td colspan="9" class="loading">No data for this filter.</td></tr>';return;}
   let html='';
   masters.forEach((m,i)=>{
     const ctrCls=m.ctrAvg>=1?'good':'';
@@ -450,8 +542,7 @@ function renderTable(masters){
     kids.forEach(r=>{
       const lst=listOf(r[C.KEY]);
       const d=toNum(r[C.DELIVERED]);
-      const ctr=pct(r[C.CTR]);
-      const unsub=pct(r[C.UNSUB]);
+      const ctr=pct(r[C.CTR]);const unsub=pct(r[C.UNSUB]);
       html+=`<tr class="child" data-p="${i}">
         <td></td>
         <td class="listname">${lst}</td>
@@ -475,12 +566,10 @@ function renderTable(masters){
   });
 }
 
-// Collapsible Monthly Revenue toggle
+// Collapsible Monthly Revenue
 document.getElementById('revHdr').addEventListener('click',()=>{
-  const hdr=document.getElementById('revHdr');
-  const body=document.getElementById('revBody');
-  hdr.classList.toggle('open');
-  body.classList.toggle('open');
+  document.getElementById('revHdr').classList.toggle('open');
+  document.getElementById('revBody').classList.toggle('open');
 });
 
 document.getElementById('listFilter').addEventListener('change',render);

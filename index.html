@@ -59,6 +59,26 @@
   .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
   .loading{padding:40px;text-align:center;color:var(--muted)}
   .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;font-size:12px;color:#374151}
+
+  /* Monthly Revenue Section */
+  .monthly-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:6px}
+  .month-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden}
+  .month-card .mo-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .month-card .mo-rev{font-size:24px;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+  .month-card .mo-rev.zero{color:#C9CCC9}
+  .month-card .mo-meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .month-card .mo-ecpm{font-size:13px;font-weight:600;color:var(--green);margin-top:3px}
+  .month-card .mo-bar{position:absolute;bottom:0;left:0;height:4px;background:var(--green);border-radius:0 0 0 14px;transition:width .4s}
+  .month-card.current{border-color:var(--green);box-shadow:0 0 0 2px var(--green-soft)}
+  .rev-chart{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:6px}
+  .rev-chart-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .bar-mo{font-size:12px;color:var(--muted);width:44px;flex-shrink:0;text-align:right}
+  .bar-track{flex:1;background:var(--line);border-radius:4px;height:22px;position:relative;overflow:hidden}
+  .bar-fill{height:100%;background:var(--green);border-radius:4px;transition:width .5s;min-width:2px}
+  .bar-fill.zero{background:#E7E9E7}
+  .bar-val{font-size:12px;font-weight:600;color:var(--ink);width:70px;flex-shrink:0}
+  .bar-sends{font-size:11px;color:var(--muted);width:60px;flex-shrink:0}
   @media(max-width:640px){
     .hide-sm{display:none}
     h1{font-size:20px}
@@ -94,6 +114,10 @@
   </div>
 
   <div class="kpis" id="kpis"></div>
+
+  <div class="sectionlabel">Monthly Revenue</div>
+  <div class="monthly-grid" id="monthlyCards"></div>
+  <div class="rev-chart" id="revChart"></div>
 
   <div class="sectionlabel">Send log</div>
   <div class="tablecard">
@@ -275,6 +299,7 @@ function render(){
   }).sort((a,b)=> new Date(b.date)-new Date(a.date));
 
   renderKPIs(masters);
+  renderMonthly(masters);
   renderTable(masters);
 }
 
@@ -301,6 +326,66 @@ function renderKPIs(masters){
   document.getElementById('kpis').innerHTML=k.map(x=>
     `<div class="kpi ${x.bad?'bad':''}"><div class="label">${x.label}</div>
      <div class="num">${x.num||'—'}</div><div class="foot">${x.foot||''}</div></div>`).join('');
+}
+
+function renderMonthly(masters){
+  // Build month buckets from master rows
+  const months={};
+  masters.forEach(m=>{
+    const mo=(m.date||'').slice(0,7); // 'YYYY-MM'
+    if(!mo||mo.length<7)return;
+    if(!months[mo])months[mo]={revenue:0,delivered:0,sends:0,paid:0};
+    months[mo].revenue+=m.revenue;
+    months[mo].delivered+=m.delivered;
+    months[mo].sends++;
+    if(m.revenue>0)months[mo].paid++;
+  });
+
+  const sorted=Object.keys(months).sort().reverse(); // newest first
+  if(!sorted.length){
+    document.getElementById('monthlyCards').innerHTML='<p style="color:var(--muted);font-size:13px">No data yet. Add revenue in the Google Sheet to see monthly totals.</p>';
+    document.getElementById('revChart').innerHTML='';
+    return;
+  }
+
+  const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
+  const nowMo=new Date().toISOString().slice(0,7);
+
+  // Cards
+  const cards=sorted.map(mo=>{
+    const d=months[mo];
+    const ecpm=(d.revenue>0&&d.delivered>0)?d.revenue/(d.delivered/1000):0;
+    const barW=maxRev>0?Math.round((d.revenue/maxRev)*100):0;
+    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'short',year:'numeric'});
+    const isCurrent=mo===nowMo;
+    return `<div class="month-card${isCurrent?' current':''}">
+      <div class="mo-label">${label}${isCurrent?' <span class="badge">current</span>':''}</div>
+      <div class="mo-rev${d.revenue===0?' zero':''}">${d.revenue>0?fmtMoney(d.revenue):'—'}</div>
+      <div class="mo-meta">${d.sends} sends · ${d.paid} paid</div>
+      ${ecpm>0?`<div class="mo-ecpm">ECPM ${fmtMoney(ecpm)}</div>`:''}
+      <div class="mo-bar" style="width:${barW}%"></div>
+    </div>`;
+  }).join('');
+  document.getElementById('monthlyCards').innerHTML=cards;
+
+  // Horizontal bar chart (oldest → newest)
+  const chartMos=[...sorted].reverse();
+  const chartMax=Math.max(...chartMos.map(k=>months[k].revenue),1);
+  let chartHtml='<div class="rev-chart-title">Revenue by Month (bar = $, hover for ECPM)</div>';
+  chartMos.forEach(mo=>{
+    const d=months[mo];
+    const pct=chartMax>0?Math.round((d.revenue/chartMax)*100):0;
+    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'short',year:'2-digit'});
+    const ecpm=(d.revenue>0&&d.delivered>0)?d.revenue/(d.delivered/1000):0;
+    const title=`${fmtMoney(d.revenue)} · ECPM ${ecpm>0?fmtMoney(ecpm):'—'} · ${d.sends} sends`;
+    chartHtml+=`<div class="bar-row" title="${title}">
+      <div class="bar-mo">${label}</div>
+      <div class="bar-track"><div class="bar-fill${d.revenue===0?' zero':''}" style="width:${pct}%"></div></div>
+      <div class="bar-val">${d.revenue>0?fmtMoney(d.revenue):'—'}</div>
+      <div class="bar-sends">${d.sends} sends</div>
+    </div>`;
+  });
+  document.getElementById('revChart').innerHTML=chartHtml;
 }
 
 function renderTable(masters){

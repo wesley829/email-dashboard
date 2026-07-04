@@ -642,33 +642,40 @@ document.getElementById('refreshBtn').addEventListener('click', async function()
   const label = document.getElementById('refreshLabel');
 
   if (WEB_APP_URL && WEB_APP_URL.trim() !== '') {
-    // Step 1: Trigger Apps Script sync, show spinner
+    // Step 1: Trigger Apps Script syncAll (mode=full), show spinner
     btn.disabled = true;
     icon.className = 'spin-icon';
     icon.textContent = '↻';
     label.textContent = 'Syncing…';
-    document.getElementById('updated').textContent = 'Pulling new data…';
+    document.getElementById('updated').textContent = 'Syncing all campaigns…';
 
-    try {
-      const res = await fetch(WEB_APP_URL + '?mode=delta', { method: 'GET', mode: 'no-cors' });
-      // no-cors means we can't read the response body, but the script still runs
-      // Wait a moment for the sheet to finish writing
-      await new Promise(r => setTimeout(r, 3000));
-    } catch(e) {
-      // Script may still have run even if fetch failed — proceed to reload
-    }
+    // Fire the sync request (no-cors — Apps Script runs even though we can't read the response)
+    fetch(WEB_APP_URL + '?mode=full', { method: 'GET', mode: 'no-cors' }).catch(() => {});
 
-    // Step 2: Now reload the CSV from the sheet
+    // Step 2: Wait 50 seconds with a live countdown (syncAll takes ~30-50s)
+    const WAIT_MS = 50000;
+    const start = Date.now();
+    await new Promise(resolve => {
+      const interval = setInterval(() => {
+        const elapsed = Date.now() - start;
+        const remaining = Math.max(0, Math.ceil((WAIT_MS - elapsed) / 1000));
+        label.textContent = 'Syncing… ' + remaining + 's';
+        if (elapsed >= WAIT_MS) { clearInterval(interval); resolve(); }
+      }, 500);
+    });
+
+    // Step 3: Now reload the CSV from the sheet
     label.textContent = 'Loading…';
+    document.getElementById('updated').textContent = 'Loading fresh data…';
     await loadData();
 
-    // Step 3: Reset button
+    // Step 4: Reset button
     btn.disabled = false;
     icon.className = '';
     icon.textContent = '↻';
     label.textContent = 'Refresh';
   } else {
-    // No Web App URL configured — just reload the CSV as before
+    // No Web App URL configured — just reload the CSV
     loadData();
   }
 });

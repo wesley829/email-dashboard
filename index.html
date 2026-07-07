@@ -23,7 +23,16 @@
   .sub{color:var(--muted);font-size:13px;margin-top:3px}
   .updated{color:var(--muted);font-size:12px;padding-bottom:2px;white-space:nowrap}
 
-  /* ── Controls ── */
+  /* ── Top Tab Nav ── */
+  .tab-nav{display:flex;gap:4px;margin:18px 0 0;border-bottom:2px solid var(--line);padding-bottom:0}
+  .tab-btn{font:inherit;font-size:13px;font-weight:600;background:none;border:none;
+    color:var(--muted);padding:9px 18px 10px;cursor:pointer;border-radius:10px 10px 0 0;
+    border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s,background .15s;
+    outline:none;-webkit-appearance:none;appearance:none}
+  .tab-btn:hover{color:var(--ink);background:var(--green-soft)}
+  .tab-btn.active{color:var(--green);border-bottom-color:var(--green);background:none}
+
+  /* ── Controls row ── */
   .controls{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;align-items:center}
   select,button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);
     color:var(--ink);border-radius:10px;padding:9px 13px;cursor:pointer;outline:none;
@@ -36,28 +45,27 @@
   button.refresh:hover:not(:disabled){background:#164a1a}
   button.refresh:active:not(:disabled){background:#0f3312;transform:scale(.98)}
   button.refresh:disabled{opacity:.65;cursor:not-allowed}
+  a.btn-green{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;
+    font-weight:600;background:var(--green);color:#fff;border:1px solid var(--green);
+    border-radius:10px;padding:9px 18px;cursor:pointer;text-decoration:none;
+    transition:background .15s}
+  a.btn-green:hover{background:#164a1a}
   @keyframes spin{to{transform:rotate(360deg)}}
   .spin-icon{display:inline-block;animation:spin .8s linear infinite}
 
-  /* ── KPI Cards ── */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:26px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:16px 16px 12px;position:relative;overflow:hidden;
-    transition:box-shadow .2s,transform .2s}
-  .kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
-  .kpi .label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:6px;
-    text-transform:uppercase;letter-spacing:.5px}
-  .kpi .num{font-size:23px;font-weight:700;letter-spacing:-.5px;line-height:1.1;
-    transition:color .3s}
-  .kpi .foot{font-size:11px;color:var(--muted);margin-top:5px}
-  .kpi.bad .num{color:var(--bad)}
-  /* sparkline sits at bottom of card */
-  .kpi .spark{display:block;margin-top:10px;width:100%;height:32px}
+  /* ── Revenue KPI card (single) ── */
+  .kpi-single{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px 22px;margin-bottom:22px;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap}
+  .kpi-single .ks-label{font-size:11px;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.5px;font-weight:500;margin-bottom:4px}
+  .kpi-single .ks-val{font-size:28px;font-weight:700;letter-spacing:-.6px;color:var(--green)}
+  .kpi-single .ks-foot{font-size:12px;color:var(--muted);margin-top:3px}
+  .kpi-single .ks-block{display:flex;flex-direction:column}
+  .kpi-single .ks-divider{width:1px;background:var(--line);align-self:stretch;margin:0 4px}
 
   /* ── Section header (collapsible) ── */
   .section-hdr{display:flex;align-items:center;justify-content:space-between;
-    margin:0 0 12px;cursor:pointer;user-select:none;padding:4px 0;
-    transition:opacity .15s}
+    margin:0 0 12px;cursor:pointer;user-select:none;padding:4px 0;transition:opacity .15s}
   .section-hdr:hover{opacity:.8}
   .section-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
   .section-caret{font-size:10px;color:var(--muted);transition:transform .22s;display:inline-block}
@@ -131,14 +139,12 @@
   .child-campaign-title{font-size:12px;color:#374151;font-weight:500}
   .child{display:none}
   .child.show{display:table-row;animation:fadeIn .18s ease}
-  .child-offer td{border-top:1px solid var(--border)!important;background:#F3F6F3;padding:7px 10px 8px!important}
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
   .good{color:var(--good);font-weight:600}
   .bad{color:var(--bad);font-weight:600}
   .rev{font-weight:700}
   .dash{color:#C4C7C4}
   .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7}
-  /* ── Danger chip + tooltip ── */
   .danger-chip{display:inline-flex;align-items:center;gap:4px;background:#FDECEA;
     color:var(--bad);border:1px solid #F5C6C6;border-radius:6px;padding:2px 7px;
     font-weight:700;font-size:12px;cursor:default;position:relative;white-space:nowrap}
@@ -153,15 +159,55 @@
   .badge{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;
     font-size:11px;color:#374151}
 
+  /* ── Calendar Tab ── */
+  #tab-calendar{display:none}
+  .cal-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .cal-toolbar input[type=text]{font:inherit;font-size:13px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);border-radius:10px;padding:9px 13px;
+    outline:none;width:220px}
+  .cal-toolbar input[type=text]:focus{border-color:var(--green)}
+  .cal-toolbar select{width:auto}
+  .cal-empty{padding:44px;text-align:center;color:var(--muted);font-size:14px}
+
+  /* Status chips */
+  .status-chip{display:inline-block;border-radius:6px;padding:2px 9px;font-size:11px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+  .status-idea{background:#F3F4F6;color:#6B7280}
+  .status-draft{background:#FEF9C3;color:#92400E}
+  .status-scheduled{background:#DBEAFE;color:#1D4ED8}
+  .status-sent{background:var(--green-soft);color:var(--green)}
+
+  /* Calendar table */
+  .cal-table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+  .cal-table thead th{background:var(--green);color:#fff;font-weight:600;text-align:left;
+    padding:9px 12px;font-size:11px;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px}
+  .cal-table tbody td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+  .cal-table tbody tr{transition:background .12s}
+  .cal-table tbody tr:hover td{background:var(--green-soft)}
+  .cal-table .cal-date{font-weight:700;white-space:nowrap;font-size:13px}
+  .cal-table .cal-time{color:var(--muted);font-size:12px;white-space:nowrap}
+  .cal-table .cal-title{font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cal-table .cal-sponsor{font-size:12px;color:#374151}
+  .cal-table .cal-platform{font-size:12px;color:var(--muted)}
+  .cal-table .cal-link a{color:var(--green);text-decoration:none;font-size:12px;font-weight:600}
+  .cal-table .cal-link a:hover{text-decoration:underline}
+  .cal-table .cal-swipe{font-size:12px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cal-table .cal-lists{font-size:12px}
+  .cal-table .cal-notes{font-size:12px;color:#374151;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .list-tag{display:inline-block;background:var(--green-soft);color:var(--green);
+    border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;margin:1px 2px 1px 0}
+  .cal-no-data{padding:48px;text-align:center;color:var(--muted);font-size:14px}
+
+  /* ── Tab content panels ── */
+  #tab-performance{display:block}
+
   /* ── Mobile ── */
   @media(max-width:600px){
     body{padding:16px 14px 60px}
     h1{font-size:18px}
-    .kpis{grid-template-columns:repeat(2,1fr);gap:8px}
-    .kpi .num{font-size:20px}
-    .kpi .spark{height:24px}
+    .kpi-single .ks-val{font-size:22px}
     .controls{gap:6px}
-    select,button{font-size:12px;padding:8px 10px}
+    select,button,a.btn-green{font-size:12px;padding:8px 10px}
     select{padding-right:24px}
     .rev-summary{gap:14px;padding:14px 16px}
     .rev-summary .rs-divider{display:none}
@@ -170,11 +216,11 @@
     .title-cell{max-width:160px}
     table{font-size:12px;min-width:480px}
     thead th,tbody td{padding:9px 8px}
+    .tab-btn{padding:8px 12px 9px;font-size:12px}
+    .cal-toolbar input[type=text]{width:160px}
   }
   @media(max-width:380px){
-    .kpis{grid-template-columns:1fr 1fr}
-    .kpi{padding:12px 12px 10px}
-    .kpi .num{font-size:18px}
+    .kpi-single .ks-val{font-size:19px}
   }
 </style>
 </head>
@@ -189,102 +235,180 @@
     <div class="updated" id="updated">—</div>
   </header>
 
-  <div class="controls">
-    <button class="refresh" id="refreshBtn"><span id="refreshIcon">↻</span> <span id="refreshLabel">Refresh</span></button>
-    <a class="refresh" href="https://docs.google.com/spreadsheets/d/1XkQw_fiklpOMO61O5L0AQE-lnob1HyMPDfw3lbSPBzQ/edit?gid=932892236#gid=932892236" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">&#9783; Data Tracker</a>
-  </div>
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="performance">Performance</button>
+    <button class="tab-btn" data-tab="calendar">Calendar</button>
+  </nav>
 
-  <!-- KPI Scorecards -->
-  <div class="kpis" id="kpis"></div>
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE TAB
+  ═══════════════════════════════════════════ -->
+  <div id="tab-performance">
 
-  <hr class="section-divider">
-
-  <!-- Send Log -->
-  <div class="sectionlabel">Send log</div>
-  <div class="tablecard">
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th class="l">Date</th>
-            <th class="l">Campaign</th>
-            <th class="l hide-sm">Sponsor</th>
-            <th class="l hide-sm">Offer</th>
-            <th>Sent</th>
-            <th>Open %</th>
-            <th>CTR %</th>
-            <th>CTOR %</th>
-            <th>Unsubs</th>
-            <th>Bounces</th>
-            <th>Spam %</th>
-            <th>Rev</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="12" class="loading">Loading data…</td></tr>
-        </tbody>
-      </table>
+    <div class="controls">
+      <button class="refresh" id="refreshBtn"><span id="refreshIcon">↻</span> <span id="refreshLabel">Refresh</span></button>
+      <a class="btn-green" href="https://docs.google.com/spreadsheets/d/1XkQw_fiklpOMO61O5L0AQE-lnob1HyMPDfw3lbSPBzQ/edit?gid=932892236#gid=932892236" target="_blank" rel="noopener">&#9783; Data Tracker</a>
     </div>
-  </div>
 
-  <div class="note">
-    Green CTR = above 1% &nbsp;·&nbsp; Red Spam = above 0.08% threshold (ISP alert level) &nbsp;·&nbsp; Dashes = not yet logged.<br>
-    Tap any campaign row to expand list-level detail.
-  </div>
+    <!-- Revenue KPI (single card) -->
+    <div class="kpi-single" id="revKpiCard">
+      <div class="ks-block">
+        <div class="ks-label">Total Revenue</div>
+        <div class="ks-val" id="ks-rev">—</div>
+        <div class="ks-foot" id="ks-rev-foot">across all sends</div>
+      </div>
+      <div class="ks-divider"></div>
+      <div class="ks-block">
+        <div class="ks-label">Overall ECPM</div>
+        <div class="ks-val" id="ks-ecpm" style="color:var(--ink);font-size:20px">—</div>
+        <div class="ks-foot">revenue per 1,000 sent</div>
+      </div>
+      <div class="ks-divider"></div>
+      <div class="ks-block">
+        <div class="ks-label">Paid Sends</div>
+        <div class="ks-val" id="ks-paid" style="color:var(--ink);font-size:20px">—</div>
+        <div class="ks-foot">campaigns with revenue</div>
+      </div>
+    </div>
 
-</div>
+    <!-- Monthly Revenue (collapsible) -->
+    <div class="section-hdr open" id="revHdr">
+      <div class="section-title">
+        <span class="section-caret">▶</span>
+        Monthly Revenue
+      </div>
+      <span class="section-badge" id="revBadge">—</span>
+    </div>
+    <div class="section-body open" id="revBody">
+      <div class="rev-summary" id="revSummary"></div>
+      <div class="monthly-table-wrap">
+        <table class="monthly-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th class="r">Revenue</th>
+              <th class="r">ECPM</th>
+              <th class="r">Sends</th>
+              <th class="r hide-sm">Paid</th>
+              <th class="hide-sm"></th>
+            </tr>
+          </thead>
+          <tbody id="revTbody"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Send Log -->
+    <div class="sectionlabel">Send log</div>
+    <div class="tablecard">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th class="l">Date</th>
+              <th class="l">Campaign</th>
+              <th class="l hide-sm">Sponsor</th>
+              <th class="l hide-sm">Offer</th>
+              <th>Sent</th>
+              <th>Open %</th>
+              <th>CTR %</th>
+              <th>CTOR %</th>
+              <th>Unsubs</th>
+              <th>Bounces</th>
+              <th>Spam %</th>
+              <th>Rev</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="12" class="loading">Loading data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      Green CTR = above 1% &nbsp;·&nbsp; Red Spam = above 0.08% threshold (ISP alert level) &nbsp;·&nbsp; Dashes = not yet logged.<br>
+      Tap any campaign row to expand list-level detail.
+    </div>
+
+  </div><!-- /tab-performance -->
+
+  <!-- ═══════════════════════════════════════════
+       CALENDAR TAB
+  ═══════════════════════════════════════════ -->
+  <div id="tab-calendar">
+
+    <div class="controls" style="margin-top:18px">
+      <a class="btn-green" href="https://docs.google.com/spreadsheets/d/1XkQw_fiklpOMO61O5L0AQE-lnob1HyMPDfw3lbSPBzQ/edit?gid=190590528#gid=190590528" target="_blank" rel="noopener">&#9783; Edit Calendar</a>
+      <button class="refresh" id="calRefreshBtn" style="background:#2563EB;border-color:#2563EB">↻ Reload</button>
+    </div>
+
+    <div class="cal-toolbar">
+      <input type="text" id="calSearch" placeholder="Search campaigns, sponsors…">
+      <select id="calStatus">
+        <option value="">All statuses</option>
+        <option value="Idea">Idea</option>
+        <option value="Draft">Draft</option>
+        <option value="Scheduled">Scheduled</option>
+        <option value="Sent">Sent</option>
+      </select>
+    </div>
+
+    <div class="tablecard">
+      <div class="table-scroll">
+        <table class="cal-table">
+          <thead>
+            <tr>
+              <th>Send Date</th>
+              <th>Time (CT)</th>
+              <th>Campaign Title</th>
+              <th>Sponsor / Offer</th>
+              <th>Platform</th>
+              <th>Affiliate Link</th>
+              <th>Swipe Source</th>
+              <th>Status</th>
+              <th>Lists</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="calTbody">
+            <tr><td colspan="10" class="cal-no-data">Loading calendar…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-calendar -->
+
+</div><!-- /wrap -->
 
 <script>
-// Paste your Apps Script Web App URL here after deploying (see Code.gs instructions)
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2sJuPz2EtHUbtVL3LWyGuXLiOcwH60544jGDz3Wdi0LhVxTgGGY3Mx-Y35vrfL0jxBA/exec";
-
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=932892236&single=true&output=csv";
-// cols: A=Date B=Key C=Campaign D=Sponsor E=Revenue F=Delivered G=Open% H=CTR% I=CTOR% J=Unsubs K=Offer L=OfferLink M=Spam N=Bounces
-const EMBEDDED = {"cols":["date","key","campaign","sponsor","revenue","delivered","open","ctr","ctor","unsubs","ecpm","affiliateUrl"],"rows":[
-  ["2026-07-02","G&G - Peace wasn't where I expected to find it.","Peace wasn't where I expected to find it.","Jeff Sands","",82476,23.61,0.14,0.59,0.11,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-07-01","AWS - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","Jeff Sands","",8312,33.97,9.44,27.8,0.17,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-07-01","PND - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","Jeff Sands","",10861,47.22,25.78,54.59,0.12,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-07-01","AHS - Jeff Free book - Peace wasn't where I expected to find it.","Jeff Free book - Peace wasn't where I expected to find it.","Jeff Sands","",10306,46.62,25.38,54.44,0.77,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-30","G&G - I slept with a loaded pistol under my head.","I slept with a loaded pistol under my head.","Jeff Sands","",82608,25.09,0.18,0.73,0.13,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-30","AHS - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","Jeff Sands","",7952,57.86,3.46,5.98,0.33,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-30","PND - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","Jeff Sands","",8826,57.01,2.88,5.05,0.25,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-30","AWS - Jeff Free book - I slept with a loaded pistol under my head","Jeff Free book - I slept with a loaded pistol under my head","Jeff Sands","",6717,55.23,1.53,2.78,0.3,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-29","G&G - \"Shower Trick\" cuts heart attack risk by 95%","\"Shower Trick\" cuts heart attack risk by 95%","CardioClEAR","",82578,22.6,0.92,4.07,0.09,"","https://tracking.cardioclear7-at.com/aff_c?offer_id=41&aff_id=791&url_id=2386&aff_sub=eaGandGcclear062826"],
-  ["2026-06-29","AWS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","CardioClEAR","",8000,48.7,10.4,21.36,0.14,"","https://tracking.cardioclear7-at.com/aff_c?offer_id=41&aff_id=791&url_id=2386&aff_sub=eaGandGcclear062826"],
-  ["2026-06-29","PND - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","CardioClEAR","",9809,54.68,20.35,37.21,0.51,"","https://tracking.cardioclear7-at.com/aff_c?offer_id=41&aff_id=791&url_id=2386&aff_sub=eaGandGcclear062826"],
-  ["2026-06-29","AHS - iRollie - \"Shower Trick\" cuts heart attack risk by 95%","iRollie - \"Shower Trick\" cuts heart attack risk by 95%","CardioClEAR","",8909,59.51,23.75,39.91,0.09,"","https://tracking.cardioclear7-at.com/aff_c?offer_id=41&aff_id=791&url_id=2386&aff_sub=eaGandGcclear062826"],
-  ["2026-06-28","G&G - I thought I had something to prove...","I thought I had something to prove...","Jeff Sands","",82804,40.39,0.3,0.74,0.24,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-28","AWS - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","Jeff Sands","",5496,53.6,1.75,3.26,0.42,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-28","PND - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","Jeff Sands","",7674,60.1,3.0,4.99,0.65,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-28","AHS - I thought I had something to prove... (Free Book)","I thought I had something to prove... (Free Book)","Jeff Sands","",6557,58.46,3.08,5.27,0.47,"","https://www.amazon.com/dp/B00QZMRZU0"],
-  ["2026-06-27","G&G - This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)","This hot drink DOUBLED stem cells in 30 days (Green tea vs Hot Cacao)","CacaoBliss","",82698,29.24,0.55,1.87,0.11,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-27","AHS - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","CacaoBliss","",8108,56.33,19.84,35.23,0.12,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-27","PND - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","CacaoBliss","",8673,55.79,19.79,35.46,0.18,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-27","AWS - iRollie - This hot drink DOUBLED stem cells in 30 days...","iRollie - This hot drink DOUBLED stem cells in 30 days...","CacaoBliss","",6141,49.89,12.95,25.95,0.11,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-26","G&G - Why Your Emergency Food Storage Could Be Slowly Killing Your Family","Why Your Emergency Food Storage Could Be Slowly Killing Your Family","Freeze Dry Wholesalers","",81460,37.79,0.15,0.41,0.14,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-26","AWS - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry Wholesalers","",4663,60.03,1.78,2.97,0.21,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-26","PND - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry Wholesalers","",7563,57.38,2.82,4.91,0.25,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-26","AHS - Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry - Why Your Emergency Food Storage...","Freeze Dry Wholesalers","",6344,60.25,2.55,4.24,0.17,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-25","G&G - The #1 food on Trump's Mar-a-Lago bunker menu","The #1 food on Trump's Mar-a-Lago bunker menu","Freeze Dry Wholesalers","",141067,22.85,0.2,0.86,0.12,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-25","AHS - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry Wholesalers","",6542,60.68,3.39,5.59,0.31,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-25","PND - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry Wholesalers","",8352,56.63,19.25,34.0,0.12,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-25","AWS - Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry - The #1 food on Trump's Mar-a-Lago","Freeze Dry Wholesalers","",4912,58.18,15.76,27.08,0.24,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-24","G&G - Is their longevity secret drinking chocolate?","Is their longevity secret drinking chocolate?","CacaoBliss","",4,25.0,0.0,0.0,0.0,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-24","AWS - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","CacaoBliss","",4533,26.69,1.9,7.11,0.13,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-24","PND - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","CacaoBliss","",4663,43.38,4.98,11.47,0.13,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-24","AHS - iRollie - 5 Cups Cocoa daily","iRollie - 5 Cups Cocoa daily","CacaoBliss","",5141,24.39,3.27,13.4,0.04,"","https://bulletin.eefpage.com/aff_c?offer_id=1&aff_id=7&url_id=14&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGcacaokuna062426"],
-  ["2026-06-23","G&G - Elon's bunker food isn't from Amazon","Elon's bunker food isn't from Amazon","Freeze Dry Wholesalers","",170313,19.52,0.28,1.43,0.1,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-23","AHS - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","Freeze Dry Wholesalers","",5732,78.73,27.08,34.39,0.37,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-23","PND - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","Freeze Dry Wholesalers","",6081,70.89,25.28,35.65,0.18,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-23","AWS - Elon's bunker food isn't from amazon","Elon's bunker food isn't from amazon","Freeze Dry Wholesalers","",3967,73.93,20.52,27.75,0.25,"","https://freezedrywholesalers.online/?ref=GRITSANDGEAR"],
-  ["2026-06-20","G&G - Heart Attack Test: touch your feet like THIS (for 7 sec)","Heart Attack Test: touch your feet like THIS (for 7 sec)","PhysioTru Omega",400,172271,21.18,1.32,6.23,0.13,"","https://bulletin.physiotru2.com/aff_c?offer_id=1&aff_id=5&url_id=8&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGphysomega062026"],
-  ["2026-06-20","AWS - #1 heart attack sign is not chest pain, cholesterol, or BP","#1 heart attack sign is not chest pain, cholesterol, or BP","PhysioTru Omega","",3342,41.62,26.06,62.62,0.21,"","https://bulletin.physiotru2.com/aff_c?offer_id=1&aff_id=5&url_id=8&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGphysomega062026"],
-  ["2026-06-20","PND - #1 heart attack sign is not chest pain, cholesterol, or BP","#1 heart attack sign is not chest pain, cholesterol, or BP","PhysioTru Omega","",5001,45.77,31.03,67.8,1.72,"","https://bulletin.physiotru2.com/aff_c?offer_id=1&aff_id=5&url_id=8&aff_sub2=gritsgear&aff_sub4=PAID&aff_sub=eaGandGphysomega062026"]
-]};
+const CALENDAR_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=190590528&single=true&output=csv";
 
-// Sheet cols: A=Date, B=Key, C=Campaign, D=Sponsor, E=Revenue, F=Delivered, G=Open%, H=CTR%, I=CTOR%, J=Unsub, K=Offer(name), L=Offer Link(URL)
+// Sheet cols: A=Date, B=Key, C=Campaign, D=Sponsor, E=Revenue, F=Delivered, G=Open%, H=CTR%, I=CTOR%, J=Unsub, K=Offer(name), L=Offer Link(URL), M=Spam, N=Bounces
 const C={DATE:0,KEY:1,CAMPAIGN:2,SPONSOR:3,REVENUE:4,DELIVERED:5,OPEN:6,CTR:7,CTOR:8,UNSUBS:9,OFFER:10,OFFER_LINK:11,SPAM:12,BOUNCES:13};
+// Calendar cols: A=SendDate, B=SendTime, C=CampaignTitle, D=Sponsor/Offer, E=OfferPlatform, F=AffiliateLink, G=SwipeSource, H=Status, I=Lists, J=Notes
+const CAL={DATE:0,TIME:1,TITLE:2,SPONSOR:3,PLATFORM:4,LINK:5,SWIPE:6,STATUS:7,LISTS:8,NOTES:9};
+
 let RAW=[];
+let CAL_RAW=[];
+
+// ── Tab switching ──
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab=btn.getAttribute('data-tab');
+    document.getElementById('tab-performance').style.display=tab==='performance'?'block':'none';
+    document.getElementById('tab-calendar').style.display=tab==='calendar'?'block':'none';
+    if(tab==='calendar'&&CAL_RAW.length===0)loadCalendar();
+  });
+});
 
 // ── Parsers ──
 function parseCSV(text){
@@ -319,85 +443,144 @@ function cleanTitle(key,campaign){
   t=t.replace(/^\s*(G&G|AWS|AHS|PND)\s*-\s*/i,'').trim();
   return t;
 }
-function corePhrase(key,campaign){
-  let t=cleanTitle(key,campaign).toLowerCase();
-  t=t.replace(/^(jeff free book|jeff sands|free book|irollie|freeze dry|cardioclear|physiotru|eef|day \d+ email|#\d+)\s*[-:]\s*/gi,'');
-  t=t.replace(/\(free book\)|\(1\)|\(2\)/g,'');
-  t=t.replace(/[^a-z0-9]/g,'');
-  return t.slice(0,24);
-}
-function weekBucket(date){const d=new Date(date);if(isNaN(d))return '';return Math.floor(d.getTime()/(3*864e5));}
-function baseKey(key,campaign,date){
-  const p=corePhrase(key,campaign);
-  return(p&&p.length>=6)?p+'|'+weekBucket(date):(date||'').slice(0,10);
-}
 function fmtInt(n){return Math.round(n).toLocaleString();}
 function fmtPct(n){return n==null?null:n.toFixed(2)+'%';}
 function fmtMoney(n){return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});}
-function fmtM(n){return n>=1e6?(n/1e6).toFixed(2)+'M':(n>=1e3?(n/1e3).toFixed(0)+'K':fmtInt(n));}
+function truncate(s,n){return s&&s.length>n?s.slice(0,n)+'…':s||'';}
 
 // ── Count-up animation ──
 function countUp(el,target,formatter,duration){
   const start=performance.now();
   function step(now){
     const p=Math.min((now-start)/duration,1);
-    const ease=1-Math.pow(1-p,3); // ease-out cubic
-    const val=target*ease;
-    el.textContent=formatter(val);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=formatter(target*ease);
     if(p<1)requestAnimationFrame(step);
     else el.textContent=formatter(target);
   }
   requestAnimationFrame(step);
 }
 
-// ── Sparkline SVG ──
-function sparkline(values,w,h,color){
-  if(!values||values.length<2)return '';
-  const min=Math.min(...values),max=Math.max(...values);
-  const range=max-min||1;
-  const pts=values.map((v,i)=>{
-    const x=(i/(values.length-1))*w;
-    const y=h-((v-min)/range)*(h-4)-2;
-    return x+','+y;
-  });
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="overflow:visible">
-    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.6"/>
-  </svg>`;
-}
-
-// ── Data load ──
+// ── Performance data load ──
 async function loadData(){
   const tbody=document.getElementById('tbody');
   if(SHEET_CSV_URL&&SHEET_CSV_URL.trim()!==''){
-    tbody.innerHTML='<tr><td colspan="9" class="loading">Refreshing…</td></tr>';
+    tbody.innerHTML='<tr><td colspan="12" class="loading">Refreshing…</td></tr>';
     try{
       const res=await fetch(SHEET_CSV_URL+(SHEET_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
       const txt=await res.text();
       const rows=parseCSV(txt);
-      RAW=rows.slice(1).filter(r=>r.length>=6&&(r[C.KEY]||'').trim()!=='');
+      RAW=rows.slice(1).filter(r=>r.length>1&&(r[C.DATE]||'').trim()!=='').map(r=>{
+        const out=[];
+        out[C.DATE]=(r[C.DATE]||'').trim();
+        out[C.KEY]=(r[C.KEY]||'').trim();
+        out[C.CAMPAIGN]=(r[C.CAMPAIGN]||'').trim();
+        out[C.SPONSOR]=(r[C.SPONSOR]||'').trim();
+        out[C.REVENUE]=toNum(r[C.REVENUE]);
+        out[C.DELIVERED]=toNum(r[C.DELIVERED]);
+        out[C.OPEN]=pct(r[C.OPEN]);
+        out[C.CTR]=pct(r[C.CTR]);
+        out[C.CTOR]=pct(r[C.CTOR]);
+        out[C.UNSUBS]=toNum(r[C.UNSUBS]);
+        out[C.OFFER]=(r[C.OFFER]||'').trim();
+        out[C.OFFER_LINK]=(r[C.OFFER_LINK]||'').trim();
+        out[C.SPAM]=toNum(r[C.SPAM]);
+        out[C.BOUNCES]=toNum(r[C.BOUNCES]);
+        return out;
+      });
       document.getElementById('updated').textContent='Updated '+new Date().toLocaleTimeString()+' (live)';
       render();return;
     }catch(e){}
   }
-  RAW=EMBEDDED.rows.map(r=>{
-    const o=[];o[C.DATE]=r[0];o[C.KEY]=r[1];o[C.CAMPAIGN]=r[2];o[C.SPONSOR]=r[3];
-    o[C.REVENUE]=r[4];o[C.DELIVERED]=r[5];o[C.OPEN]=r[6];o[C.CTR]=r[7];
-    o[C.CTOR]=r[8];o[C.UNSUBS]=r[9];o[C.OFFER]=r[10]||'';o[C.OFFER_LINK]=r[11]||'';o[C.SPAM]=r[12]||0;o[C.BOUNCES]=r[13]||0;return o;
-  });
-  document.getElementById('updated').textContent='Snapshot · Jul 3, 2026';
+  document.getElementById('updated').textContent='Could not load sheet data';
   render();
 }
 
-function withinRange(dstr,days){
-  if(days>=9999)return true;
-  const d=new Date(dstr);if(isNaN(d))return true;
-  return d.getTime()>=Date.now()-days*864e5;
+// ── Calendar data load ──
+async function loadCalendar(){
+  const tb=document.getElementById('calTbody');
+  tb.innerHTML='<tr><td colspan="10" class="cal-no-data">Loading…</td></tr>';
+  try{
+    const res=await fetch(CALENDAR_CSV_URL+(CALENDAR_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
+    const txt=await res.text();
+    const rows=parseCSV(txt);
+    CAL_RAW=rows.slice(1).filter(r=>r.length>1&&(r[CAL.DATE]||r[CAL.TITLE]||'').trim()!=='');
+    renderCalendar();
+  }catch(e){
+    tb.innerHTML='<tr><td colspan="10" class="cal-no-data">Could not load calendar. Make sure the Calendar tab is published to web in Google Sheets (File → Share → Publish to web → Calendar tab → CSV).</td></tr>';
+  }
 }
 
+function renderCalendar(){
+  const tb=document.getElementById('calTbody');
+  const search=(document.getElementById('calSearch').value||'').toLowerCase();
+  const statusFilter=(document.getElementById('calStatus').value||'').toLowerCase();
+
+  let rows=[...CAL_RAW];
+  if(search){
+    rows=rows.filter(r=>
+      (r[CAL.TITLE]||'').toLowerCase().includes(search)||
+      (r[CAL.SPONSOR]||'').toLowerCase().includes(search)||
+      (r[CAL.NOTES]||'').toLowerCase().includes(search)
+    );
+  }
+  if(statusFilter){
+    rows=rows.filter(r=>(r[CAL.STATUS]||'').toLowerCase()===statusFilter);
+  }
+
+  // Sort by date descending (most recent first), empty dates at bottom
+  rows.sort((a,b)=>{
+    const da=a[CAL.DATE]||'';const db=b[CAL.DATE]||'';
+    if(!da&&!db)return 0;if(!da)return 1;if(!db)return -1;
+    return new Date(db)-new Date(da);
+  });
+
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="10" class="cal-no-data">No sends match the current filter.</td></tr>';
+    return;
+  }
+
+  function statusChip(s){
+    const v=(s||'').trim();
+    const cls={'idea':'status-idea','draft':'status-draft','scheduled':'status-scheduled','sent':'status-sent'}[v.toLowerCase()]||'status-idea';
+    return v?`<span class="status-chip ${cls}">${v}</span>`:'<span class="dash">—</span>';
+  }
+  function listTags(s){
+    if(!s||!s.trim())return '<span style="font-size:11px;color:var(--muted)">All 4</span>';
+    return s.split(/[,/]+/).map(l=>l.trim()).filter(Boolean)
+      .map(l=>`<span class="list-tag">${l}</span>`).join('');
+  }
+
+  let html='';
+  rows.forEach(r=>{
+    const link=(r[CAL.LINK]||'').trim();
+    const linkCell=link
+      ?`<a href="${link}" target="_blank" rel="noopener">${truncate(link.replace(/https?:\/\//,''),28)} ↗</a>`
+      :'<span class="dash">—</span>';
+    html+=`<tr>
+      <td class="cal-date">${r[CAL.DATE]||'<span class="dash">—</span>'}</td>
+      <td class="cal-time">${r[CAL.TIME]||'<span class="dash">—</span>'}</td>
+      <td class="cal-title" title="${(r[CAL.TITLE]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.TITLE],38)||'<span class="dash">—</span>'}</td>
+      <td class="cal-sponsor">${r[CAL.SPONSOR]||'<span class="dash">—</span>'}</td>
+      <td class="cal-platform">${r[CAL.PLATFORM]||'<span class="dash">—</span>'}</td>
+      <td class="cal-link">${linkCell}</td>
+      <td class="cal-swipe" title="${(r[CAL.SWIPE]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.SWIPE],22)||'<span class="dash">—</span>'}</td>
+      <td>${statusChip(r[CAL.STATUS])}</td>
+      <td class="cal-lists">${listTags(r[CAL.LISTS])}</td>
+      <td class="cal-notes" title="${(r[CAL.NOTES]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.NOTES],30)||'<span class="dash">—</span>'}</td>
+    </tr>`;
+  });
+  tb.innerHTML=html;
+}
+
+// Calendar search/filter live update
+document.getElementById('calSearch').addEventListener('input',()=>{if(CAL_RAW.length)renderCalendar();});
+document.getElementById('calStatus').addEventListener('change',()=>{if(CAL_RAW.length)renderCalendar();});
+document.getElementById('calRefreshBtn').addEventListener('click',()=>{CAL_RAW=[];loadCalendar();});
+
+// ── Render Performance ──
 function render(){
   let rows=RAW;
-
-  // Group ALL sends by calendar date — one master row per day
   const groups={};
   rows.forEach(r=>{
     const date=(r[C.DATE]||'').slice(0,10);
@@ -410,83 +593,35 @@ function render(){
     let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,wUnsub=0,wSpam=0,wBounces=0;
     g.rows.forEach(r=>{
       const d=toNum(r[C.DELIVERED]);delivered+=d;revenue+=toNum(r[C.REVENUE]);
-      wOpen+=(pct(r[C.OPEN])||0)*d;wCtr+=(pct(r[C.CTR])||0)*d;
-      wCtor+=(pct(r[C.CTOR])||0)*d;wUnsub+=toNum(r[C.UNSUBS]||0);
+      wOpen+=(r[C.OPEN]||0)*d;wCtr+=(r[C.CTR]||0)*d;
+      wCtor+=(r[C.CTOR]||0)*d;wUnsub+=toNum(r[C.UNSUBS]||0);
       wSpam+=toNum(r[C.SPAM]||0);wBounces+=toNum(r[C.BOUNCES]||0);
     });
     const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
           ctorAvg=delivered?wCtor/delivered:0;
-    const totalUnsubs=wUnsub;
     const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
-    // Use G&G row title as the master title (largest list, most representative)
     const ggRow=g.rows.find(r=>listOf(r[C.KEY])==='G&G');
     const titleRow=ggRow||g.rows[0];
     const title=cleanTitle(titleRow[C.KEY],titleRow[C.CAMPAIGN]);
-    return{title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs,totalSpam:wSpam,totalBounces:wBounces,ecpm,rows:g.rows};
+    return{title,date:g.date,delivered,revenue,openAvg,ctrAvg,ctorAvg,totalUnsubs:wUnsub,totalSpam:wSpam,totalBounces:wBounces,ecpm,rows:g.rows};
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
-  renderKPIs(masters);
+  renderRevKPI(masters);
+  renderMonthly(masters);
   renderTable(masters);
 }
 
-function renderKPIs(masters){
-  let delivered=0,revenue=0,wOpen=0,wCtr=0,wCtor=0,totalUnsubs=0,totalSpam=0,paid=0;
-  masters.forEach(m=>{
-    delivered+=m.delivered;revenue+=m.revenue;if(m.revenue>0)paid++;
-    wOpen+=m.openAvg*m.delivered;wCtr+=m.ctrAvg*m.delivered;
-    wCtor+=m.ctorAvg*m.delivered;totalUnsubs+=m.totalUnsubs;totalSpam+=m.totalSpam||0;
-  });
-  const openAvg=delivered?wOpen/delivered:0,ctrAvg=delivered?wCtr/delivered:0,
-        ctorAvg=delivered?wCtor/delivered:0;
+function renderRevKPI(masters){
+  let delivered=0,revenue=0,paid=0;
+  masters.forEach(m=>{delivered+=m.delivered;revenue+=m.revenue;if(m.revenue>0)paid++;});
   const ecpm=(revenue>0&&delivered>0)?revenue/(delivered/1000):0;
-  const rps=paid>0?revenue/paid:0;
-
-  // Build sparkline data from last 14 masters (sorted oldest→newest for trend)
-  const recent=[...masters].reverse().slice(-14);
-  const openSpark=recent.map(m=>m.openAvg);
-  const ctrSpark=recent.map(m=>m.ctrAvg);
-  const ctorSpark=recent.map(m=>m.ctorAvg);
-  const unsubSpark=recent.map(m=>m.totalUnsubs);
-
-  const spamRate=delivered>0?(totalSpam/delivered)*100:0;
-  const spamBad=spamRate>0.08;
-  const kpis=[
-    {label:'Revenue',val:revenue,fmt:v=>fmtMoney(v),foot:paid+' paid sends',spark:null,id:'kpi-rev'},
-    {label:'CTR avg',val:ctrAvg,fmt:v=>fmtPct(v),foot:'true engagement',spark:ctrSpark,id:'kpi-ctr'},
-    {label:'Open avg',val:openAvg,fmt:v=>fmtPct(v),foot:'directional',spark:openSpark,id:'kpi-open'},
-    {label:'CTOR avg',val:ctorAvg,fmt:v=>fmtPct(v),foot:'click-to-open',spark:ctorSpark,id:'kpi-ctor'},
-    {label:'Total Unsubs',val:totalUnsubs,fmt:v=>fmtInt(v),foot:'across all sends',spark:unsubSpark,bad:false,id:'kpi-unsub'},
-    {label:'Spam Rate',val:spamRate,fmt:v=>v.toFixed(3)+'%',foot:spamBad?'⚠ above 0.08% threshold':'safe < 0.08%',spark:null,bad:spamBad,id:'kpi-spam'},
-  ];
-
-  document.getElementById('kpis').innerHTML=kpis.map(k=>
-    `<div class="kpi${k.bad?' bad':''}" id="${k.id}">
-      <div class="label">${k.label}</div>
-      <div class="num" id="${k.id}-num">—</div>
-      <div class="foot">${k.foot||''}</div>
-      ${k.spark&&k.spark.length>1?`<svg class="spark" id="${k.id}-spark" viewBox="0 0 100 32" preserveAspectRatio="none"></svg>`:''}
-    </div>`).join('');
-
-  // Animate count-up
-  kpis.forEach(k=>{
-    const el=document.getElementById(k.id+'-num');
-    if(!el)return;
-    countUp(el,k.val,k.fmt,700);
-    // Draw sparkline
-    if(k.spark&&k.spark.length>1){
-      const svg=document.getElementById(k.id+'-spark');
-      if(svg){
-        const color=k.bad?'#C62828':'#1B5E20';
-        const min=Math.min(...k.spark),max=Math.max(...k.spark),range=max-min||1;
-        const pts=k.spark.map((v,i)=>{
-          const x=(i/(k.spark.length-1))*100;
-          const y=32-((v-min)/range)*28-2;
-          return x+','+y;
-        });
-        svg.innerHTML=`<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>`;
-      }
-    }
-  });
+  const revEl=document.getElementById('ks-rev');
+  const ecpmEl=document.getElementById('ks-ecpm');
+  const paidEl=document.getElementById('ks-paid');
+  countUp(revEl,revenue,v=>'$'+(Math.round(v*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}),700);
+  countUp(ecpmEl,ecpm,v=>'$'+(Math.round(v*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}),700);
+  countUp(paidEl,paid,v=>Math.round(v).toString(),700);
+  document.getElementById('ks-rev-foot').textContent=paid+' paid sends';
 }
 
 function renderMonthly(masters){
@@ -495,28 +630,22 @@ function renderMonthly(masters){
     const mo=(m.date||'').slice(0,7);
     if(!mo||mo.length<7)return;
     if(!months[mo])months[mo]={revenue:0,delivered:0,sends:0,paid:0};
-    months[mo].revenue+=m.revenue;
-    months[mo].delivered+=m.delivered;
-    months[mo].sends++;
-    if(m.revenue>0)months[mo].paid++;
+    months[mo].revenue+=m.revenue;months[mo].delivered+=m.delivered;
+    months[mo].sends++;if(m.revenue>0)months[mo].paid++;
   });
-
   const sorted=Object.keys(months).sort().reverse();
   const badge=document.getElementById('revBadge');
-
   if(!sorted.length){
     document.getElementById('revSummary').innerHTML='<span style="color:var(--muted);font-size:13px">No revenue data yet — add amounts in Column E of the Google Sheet.</span>';
     document.getElementById('revTbody').innerHTML='<tr><td colspan="6" class="loading" style="padding:24px">No revenue logged yet.</td></tr>';
     badge.textContent='0 months';return;
   }
-
   const nowMo=new Date().toISOString().slice(0,7);
   const totalRev=sorted.reduce((s,k)=>s+months[k].revenue,0);
   const totalDelivered=sorted.reduce((s,k)=>s+months[k].delivered,0);
   const overallEcpm=(totalRev>0&&totalDelivered>0)?totalRev/(totalDelivered/1000):0;
   const paidMonths=sorted.filter(k=>months[k].revenue>0).length;
   const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
-
   document.getElementById('revSummary').innerHTML=`
     <div class="rs-item"><div class="rs-label">Total Revenue</div><div class="rs-val green">${totalRev>0?fmtMoney(totalRev):'—'}</div></div>
     <div class="rs-divider"></div>
@@ -525,9 +654,7 @@ function renderMonthly(masters){
     <div class="rs-item"><div class="rs-label">Months Tracked</div><div class="rs-val">${sorted.length}</div></div>
     <div class="rs-divider"></div>
     <div class="rs-item"><div class="rs-label">Months w/ Revenue</div><div class="rs-val">${paidMonths}</div></div>`;
-
   badge.textContent=sorted.length+' months';
-
   let html='';
   sorted.forEach(mo=>{
     const d=months[mo];
@@ -549,16 +676,14 @@ function renderMonthly(masters){
   document.getElementById('revTbody').innerHTML=html;
 }
 
-function truncate(s,n){return s.length>n?s.slice(0,n)+'…':s;}
 function renderTable(masters){
   const tb=document.getElementById('tbody');
-  if(!masters.length){tb.innerHTML='<tr><td colspan="12" class="loading">No data for this filter.</td></tr>';return;}
+  if(!masters.length){tb.innerHTML='<tr><td colspan="12" class="loading">No data.</td></tr>';return;}
   let html='';
   masters.forEach((m,i)=>{
     const ctrCls=m.ctrAvg>=1?'good':'';
     const rev=m.revenue>0?`<span class="rev">${fmtMoney(m.revenue)}</span>`:'<span class="dash">—</span>';
     const shortTitle=truncate(m.title,40);
-    // Sponsor and Offer from first child row that has them
     const spRow=m.rows.find(r=>(r[C.SPONSOR]||'').trim()!=='');
     const ofRow=m.rows.find(r=>(r[C.OFFER_LINK]||r[C.OFFER]||'').trim()!=='');
     const mSponsor=(spRow&&spRow[C.SPONSOR])||'';
@@ -600,14 +725,12 @@ function renderTable(masters){
       <td>${spamDisp}</td>
       <td>${rev}</td>
     </tr>`;
-    // Sort child rows: G&G first, then AWS, AHS, PND, then others
     const order={'G&G':0,'AWS':1,'AHS':2,'PND':3,'OTHER':4};
     const kids=[...m.rows].sort((a,b)=>(order[listOf(a[C.KEY])]??9)-(order[listOf(b[C.KEY])]??9));
     kids.forEach(r=>{
       const lst=listOf(r[C.KEY]);
-      const childTitle=cleanTitle(r[C.KEY],r[C.CAMPAIGN]);
       const d=toNum(r[C.DELIVERED]);
-      const ctr=pct(r[C.CTR]);
+      const ctr=r[C.CTR];
       const rawUnsubs=toNum(r[C.UNSUBS]||0);
       html+=`<tr class="child" data-p="${i}">
         <td></td>
@@ -615,12 +738,12 @@ function renderTable(masters){
           <span class="listname-inline">${listFullName(lst)}</span>
         </td>
         <td>${fmtInt(d)}</td>
-        <td>${fmtPct(pct(r[C.OPEN]))||'—'}</td>
+        <td>${fmtPct(r[C.OPEN])||'—'}</td>
         <td class="${ctr>=1?'good':''}">${fmtPct(ctr)||'—'}</td>
-        <td>${fmtPct(pct(r[C.CTOR]))||'—'}</td>
-        <td>${(()=>{const u=rawUnsubs;return u>500?`<span class="danger-chip">${fmtInt(u)}<span class="tip">Unusually high unsub count.<br>May indicate list fatigue<br>or off-brand content.</span></span>`:u>0?fmtInt(u):'<span class="dash">—</span>';})()}</td>
-        <td>${(()=>{const b=toNum(r[C.BOUNCES]||0);const del=toNum(r[C.DELIVERED]);const br=del>0?(b/del)*100:0;return b>0?(br>2?`<span class="danger-chip">${fmtInt(b)}<span class="tip">Bounce rate above 2%.<br>High bounces hurt sender<br>reputation and deliverability.</span></span>`:fmtInt(b)):'<span class="dash">—</span>';})()}</td>
-        <td>${(()=>{const sp=toNum(r[C.SPAM]||0);const del=toNum(r[C.DELIVERED]);const rate=del>0?(sp/del)*100:0;return sp>0?(rate>0.08?`<span class="danger-chip">${rate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.<br>ISPs may throttle or block<br>your sending domain.</span></span>`:`<span style="font-size:12px">${rate.toFixed(3)}%</span>`):'<span class="dash">—</span>';})()}</td>
+        <td>${fmtPct(r[C.CTOR])||'—'}</td>
+        <td>${(()=>{const u=rawUnsubs;return u>500?`<span class="danger-chip">${fmtInt(u)}<span class="tip">Unusually high unsub count.</span></span>`:u>0?fmtInt(u):'<span class="dash">—</span>';})()}</td>
+        <td>${(()=>{const b=toNum(r[C.BOUNCES]||0);const del=toNum(r[C.DELIVERED]);const br=del>0?(b/del)*100:0;return b>0?(br>2?`<span class="danger-chip">${fmtInt(b)}<span class="tip">Bounce rate above 2%.</span></span>`:fmtInt(b)):'<span class="dash">—</span>';})()}</td>
+        <td>${(()=>{const sp=toNum(r[C.SPAM]||0);const del=toNum(r[C.DELIVERED]);const rate=del>0?(sp/del)*100:0;return sp>0?(rate>0.08?`<span class="danger-chip">${rate.toFixed(3)}%<span class="tip">Spam rate above 0.08%.</span></span>`:`<span style="font-size:12px">${rate.toFixed(3)}%</span>`):'<span class="dash">—</span>';})()}</td>
         <td>${toNum(r[C.REVENUE])>0?fmtMoney(toNum(r[C.REVENUE])):'<span class="dash">—</span>'}</td>
       </tr>`;
     });
@@ -636,49 +759,35 @@ function renderTable(masters){
 }
 
 // Collapsible Monthly Revenue
+document.getElementById('revHdr').addEventListener('click',()=>{
+  document.getElementById('revHdr').classList.toggle('open');
+  document.getElementById('revBody').classList.toggle('open');
+});
 
+// Refresh button
 document.getElementById('refreshBtn').addEventListener('click', async function() {
-  const btn = document.getElementById('refreshBtn');
-  const icon = document.getElementById('refreshIcon');
-  const label = document.getElementById('refreshLabel');
-
-  if (WEB_APP_URL && WEB_APP_URL.trim() !== '') {
-    // Step 1: Trigger Apps Script syncAll (mode=full), show spinner
-    btn.disabled = true;
-    icon.className = 'spin-icon';
-    icon.textContent = '↻';
-    label.textContent = 'Syncing…';
-    document.getElementById('updated').textContent = 'Syncing all campaigns…';
-
-    // Fire the sync request (no-cors — Apps Script runs even though we can't read the response)
-    fetch(WEB_APP_URL + '?mode=full', { method: 'GET', mode: 'no-cors' }).catch(() => {});
-
-    // Step 2: Wait 50 seconds with a live countdown (syncAll takes ~30-50s)
-    const WAIT_MS = 50000;
-    const start = Date.now();
-    await new Promise(resolve => {
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - start;
-        const remaining = Math.max(0, Math.ceil((WAIT_MS - elapsed) / 1000));
-        label.textContent = 'Syncing… ' + remaining + 's';
-        if (elapsed >= WAIT_MS) { clearInterval(interval); resolve(); }
-      }, 500);
+  const btn=document.getElementById('refreshBtn');
+  const icon=document.getElementById('refreshIcon');
+  const label=document.getElementById('refreshLabel');
+  if(WEB_APP_URL&&WEB_APP_URL.trim()!==''){
+    btn.disabled=true;
+    icon.className='spin-icon';icon.textContent='↻';label.textContent='Syncing…';
+    document.getElementById('updated').textContent='Syncing all campaigns…';
+    fetch(WEB_APP_URL+'?mode=full',{method:'GET',mode:'no-cors'}).catch(()=>{});
+    const WAIT_MS=50000;const start=Date.now();
+    await new Promise(resolve=>{
+      const interval=setInterval(()=>{
+        const elapsed=Date.now()-start;
+        const remaining=Math.max(0,Math.ceil((WAIT_MS-elapsed)/1000));
+        label.textContent='Syncing… '+remaining+'s';
+        if(elapsed>=WAIT_MS){clearInterval(interval);resolve();}
+      },500);
     });
-
-    // Step 3: Now reload the CSV from the sheet
-    label.textContent = 'Loading…';
-    document.getElementById('updated').textContent = 'Loading fresh data…';
+    label.textContent='Loading…';
+    document.getElementById('updated').textContent='Loading fresh data…';
     await loadData();
-
-    // Step 4: Reset button
-    btn.disabled = false;
-    icon.className = '';
-    icon.textContent = '↻';
-    label.textContent = 'Refresh';
-  } else {
-    // No Web App URL configured — just reload the CSV
-    loadData();
-  }
+    btn.disabled=false;icon.className='';icon.textContent='↻';label.textContent='Refresh';
+  }else{loadData();}
 });
 
 loadData();

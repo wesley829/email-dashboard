@@ -272,34 +272,7 @@
       </div>
     </div>
 
-    <!-- Monthly Revenue (collapsible) -->
-    <div class="section-hdr open" id="revHdr">
-      <div class="section-title">
-        <span class="section-caret">▶</span>
-        Monthly Revenue
-      </div>
-      <span class="section-badge" id="revBadge">—</span>
-    </div>
-    <div class="section-body open" id="revBody">
-      <div class="rev-summary" id="revSummary"></div>
-      <div class="monthly-table-wrap">
-        <table class="monthly-table">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th class="r">Revenue</th>
-              <th class="r">ECPM</th>
-              <th class="r">Sends</th>
-              <th class="r hide-sm">Paid</th>
-              <th class="hide-sm"></th>
-            </tr>
-          </thead>
-          <tbody id="revTbody"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
 
-    <hr class="section-divider">
 
     <!-- Send Log -->
     <div class="sectionlabel">Send log</div>
@@ -363,19 +336,16 @@
           <thead>
             <tr>
               <th>Send Date</th>
-              <th>Time (CT)</th>
               <th>Campaign Title</th>
               <th>Sponsor / Offer</th>
               <th>Platform</th>
               <th>Affiliate Link</th>
-              <th>Swipe Source</th>
+              <th>List</th>
               <th>Status</th>
-              <th>Lists</th>
-              <th>Notes</th>
             </tr>
           </thead>
           <tbody id="calTbody">
-            <tr><td colspan="10" class="cal-no-data">Loading calendar…</td></tr>
+            <tr><td colspan="7" class="cal-no-data">Loading calendar…</td></tr>
           </tbody>
         </table>
       </div>
@@ -499,7 +469,7 @@ async function loadData(){
 // ── Calendar data load ──
 async function loadCalendar(){
   const tb=document.getElementById('calTbody');
-  tb.innerHTML='<tr><td colspan="10" class="cal-no-data">Loading…</td></tr>';
+  tb.innerHTML='<tr><td colspan="7" class="cal-no-data">Loading…</td></tr>';
   try{
     const res=await fetch(CALENDAR_CSV_URL+(CALENDAR_CSV_URL.includes('?')?'&':'?')+'t='+Date.now());
     const txt=await res.text();
@@ -507,7 +477,7 @@ async function loadCalendar(){
     CAL_RAW=rows.slice(1).filter(r=>r.length>1&&(r[CAL.DATE]||r[CAL.TITLE]||'').trim()!=='');
     renderCalendar();
   }catch(e){
-    tb.innerHTML='<tr><td colspan="10" class="cal-no-data">Could not load calendar. Make sure the Calendar tab is published to web in Google Sheets (File → Share → Publish to web → Calendar tab → CSV).</td></tr>';
+    tb.innerHTML='<tr><td colspan="7" class="cal-no-data">Could not load calendar. Make sure the Calendar tab is published to web in Google Sheets (File → Share → Publish to web → Calendar tab → CSV).</td></tr>';
   }
 }
 
@@ -536,7 +506,7 @@ function renderCalendar(){
   });
 
   if(!rows.length){
-    tb.innerHTML='<tr><td colspan="10" class="cal-no-data">No sends match the current filter.</td></tr>';
+    tb.innerHTML='<tr><td colspan="7" class="cal-no-data">No sends match the current filter.</td></tr>';
     return;
   }
 
@@ -559,15 +529,12 @@ function renderCalendar(){
       :'<span class="dash">—</span>';
     html+=`<tr>
       <td class="cal-date">${r[CAL.DATE]||'<span class="dash">—</span>'}</td>
-      <td class="cal-time">${r[CAL.TIME]||'<span class="dash">—</span>'}</td>
       <td class="cal-title" title="${(r[CAL.TITLE]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.TITLE],38)||'<span class="dash">—</span>'}</td>
       <td class="cal-sponsor">${r[CAL.SPONSOR]||'<span class="dash">—</span>'}</td>
       <td class="cal-platform">${r[CAL.PLATFORM]||'<span class="dash">—</span>'}</td>
       <td class="cal-link">${linkCell}</td>
-      <td class="cal-swipe" title="${(r[CAL.SWIPE]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.SWIPE],22)||'<span class="dash">—</span>'}</td>
-      <td>${statusChip(r[CAL.STATUS])}</td>
       <td class="cal-lists">${listTags(r[CAL.LISTS])}</td>
-      <td class="cal-notes" title="${(r[CAL.NOTES]||'').replace(/"/g,'&quot;')}">${truncate(r[CAL.NOTES],30)||'<span class="dash">—</span>'}</td>
+      <td>${statusChip(r[CAL.STATUS])}</td>
     </tr>`;
   });
   tb.innerHTML=html;

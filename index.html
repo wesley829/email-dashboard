@@ -574,7 +574,6 @@ function render(){
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   renderRevKPI(masters);
-  renderMonthly(masters);
   renderTable(masters);
 }
 
@@ -591,57 +590,7 @@ function renderRevKPI(masters){
   document.getElementById('ks-rev-foot').textContent=paid+' paid sends';
 }
 
-function renderMonthly(masters){
-  const months={};
-  masters.forEach(m=>{
-    const mo=(m.date||'').slice(0,7);
-    if(!mo||mo.length<7)return;
-    if(!months[mo])months[mo]={revenue:0,delivered:0,sends:0,paid:0};
-    months[mo].revenue+=m.revenue;months[mo].delivered+=m.delivered;
-    months[mo].sends++;if(m.revenue>0)months[mo].paid++;
-  });
-  const sorted=Object.keys(months).sort().reverse();
-  const badge=document.getElementById('revBadge');
-  if(!sorted.length){
-    document.getElementById('revSummary').innerHTML='<span style="color:var(--muted);font-size:13px">No revenue data yet — add amounts in Column E of the Google Sheet.</span>';
-    document.getElementById('revTbody').innerHTML='<tr><td colspan="6" class="loading" style="padding:24px">No revenue logged yet.</td></tr>';
-    badge.textContent='0 months';return;
-  }
-  const nowMo=new Date().toISOString().slice(0,7);
-  const totalRev=sorted.reduce((s,k)=>s+months[k].revenue,0);
-  const totalDelivered=sorted.reduce((s,k)=>s+months[k].delivered,0);
-  const overallEcpm=(totalRev>0&&totalDelivered>0)?totalRev/(totalDelivered/1000):0;
-  const paidMonths=sorted.filter(k=>months[k].revenue>0).length;
-  const maxRev=Math.max(...sorted.map(k=>months[k].revenue),1);
-  document.getElementById('revSummary').innerHTML=`
-    <div class="rs-item"><div class="rs-label">Total Revenue</div><div class="rs-val green">${totalRev>0?fmtMoney(totalRev):'—'}</div></div>
-    <div class="rs-divider"></div>
-    <div class="rs-item"><div class="rs-label">Overall ECPM</div><div class="rs-val">${overallEcpm>0?fmtMoney(overallEcpm):'—'}</div></div>
-    <div class="rs-divider"></div>
-    <div class="rs-item"><div class="rs-label">Months Tracked</div><div class="rs-val">${sorted.length}</div></div>
-    <div class="rs-divider"></div>
-    <div class="rs-item"><div class="rs-label">Months w/ Revenue</div><div class="rs-val">${paidMonths}</div></div>`;
-  badge.textContent=sorted.length+' months';
-  let html='';
-  sorted.forEach(mo=>{
-    const d=months[mo];
-    const ecpm=(d.revenue>0&&d.delivered>0)?d.revenue/(d.delivered/1000):0;
-    const barW=maxRev>0?Math.round((d.revenue/maxRev)*100):0;
-    const label=new Date(mo+'-02').toLocaleString('en-US',{month:'long',year:'numeric'});
-    const isCur=mo===nowMo;
-    html+=`<tr>
-      <td class="mo-name">${label}${isCur?'<span class="mo-badge-cur">current</span>':''}</td>
-      <td class="r mo-rev-val${d.revenue===0?' zero':''}">${d.revenue>0?fmtMoney(d.revenue):'—'}</td>
-      <td class="r mo-ecpm${ecpm===0?' zero':''}">${ecpm>0?fmtMoney(ecpm):'—'}</td>
-      <td class="r">${d.sends}</td>
-      <td class="r hide-sm">${d.paid}</td>
-      <td class="mo-bar-cell hide-sm">
-        <div class="mo-bar-track"><div class="mo-bar-fill${d.revenue===0?' zero':''}" style="width:${barW}%"></div></div>
-      </td>
-    </tr>`;
-  });
-  document.getElementById('revTbody').innerHTML=html;
-}
+
 
 function renderTable(masters){
   const tb=document.getElementById('tbody');
@@ -725,11 +674,7 @@ function renderTable(masters){
   });
 }
 
-// Collapsible Monthly Revenue
-document.getElementById('revHdr').addEventListener('click',()=>{
-  document.getElementById('revHdr').classList.toggle('open');
-  document.getElementById('revBody').classList.toggle('open');
-});
+
 
 // Refresh button
 document.getElementById('refreshBtn').addEventListener('click', async function() {

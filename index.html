@@ -356,6 +356,7 @@
 </div><!-- /wrap -->
 
 <script>
+const NET_MARGIN = 0.80; // 20% cut applied to all gross revenue
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx2sJuPz2EtHUbtVL3LWyGuXLiOcwH60544jGDz3Wdi0LhVxTgGGY3Mx-Y35vrfL0jxBA/exec";
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=932892236&single=true&output=csv";
 const CALENDAR_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJIHmbZAtYv9lGTkFSfnI350LCgsEf-V7iV5W4Gs4eutW-xrizEN9d78DZK57CwhjKsO9zRX8beIon/pub?gid=190590528&single=true&output=csv";
@@ -446,7 +447,7 @@ async function loadData(){
         out[C.KEY]=(r[C.KEY]||'').trim();
         out[C.CAMPAIGN]=(r[C.CAMPAIGN]||'').trim();
         out[C.SPONSOR]=(r[C.SPONSOR]||'').trim();
-        out[C.REVENUE]=toNum(r[C.REVENUE]);
+        out[C.REVENUE]=toNum(r[C.REVENUE])*NET_MARGIN;
         out[C.DELIVERED]=toNum(r[C.DELIVERED]);
         out[C.OPEN]=pct(r[C.OPEN]);
         out[C.CTR]=pct(r[C.CTR]);
